@@ -57,9 +57,14 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["displayName", "files"],
+            "required": [
+              "displayName",
+              "files"
+            ],
             "properties": {
-              "displayName": { "type": "string" },
+              "displayName": {
+                "type": "string"
+              },
               "defaultPath": {
                 "type": "string",
                 "description": "Where to put module when the path is unknown, such as when running from the command palette"
@@ -73,7 +78,10 @@
                 "items": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["name", "content"],
+                  "required": [
+                    "name",
+                    "content"
+                  ],
                   "properties": {
                     "name": {
                       "type": "string",
@@ -82,7 +90,9 @@
                     "content": {
                       "type": "array",
                       "description": "The content of the file as a list of strings",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -99,7 +109,7 @@
   },
   "devDependencies": {
     "@types/node": "^13.1.6",
-    "typescript": "^3.7.4",
-    "vscode": "^1.1.36"
+    "@types/vscode": "^1.41.0",
+    "typescript": "^3.7.4"
   }
 }
