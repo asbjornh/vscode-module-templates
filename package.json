@@ -8,6 +8,15 @@
     "vscode:prepublish": "tsc",
     "build": "tsc"
   },
+  "dependencies": {
+    "change-case": "^4.1.1",
+    "fs-extra": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.6",
+    "@types/vscode": "^1.41.0",
+    "typescript": "^3.7.4"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/asbjornh/vscode-module-templates.git"
@@ -103,14 +112,5 @@
         }
       }
     }
-  },
-  "dependencies": {
-    "change-case": "^4.1.1",
-    "fs-extra": "^8.1.0"
-  },
-  "devDependencies": {
-    "@types/node": "^13.1.6",
-    "@types/vscode": "^1.41.0",
-    "typescript": "^3.7.4"
   }
 }
