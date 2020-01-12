@@ -24,7 +24,7 @@ export function createFiles(
 ) {
   const workspaceRoot = workspace.workspaceFolders?.[0].uri.fsPath;
 
-  if (!workspaceRoot) {
+  if (!workspaceRoot && !uri) {
     window.showErrorMessage(
       "When running 'New From Template' from the command palette, you must be in a workspace"
     );
