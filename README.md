@@ -2,7 +2,9 @@
 
 A flexible VSCode extension for creating file/folder templates for new modules.
 
-There are no templates included with this extensions. This means that you'll have to do the hard work yourself, but it also means that you can use this with any language/framework that you want.
+_There are no templates included with this extension_. This means that you'll have to do the hard work yourself, but it also means that you can use this with any language/framework that you want.
+
+![Screen capture](screencap.gif)
 
 ## Use
 
