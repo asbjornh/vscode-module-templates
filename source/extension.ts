@@ -1,6 +1,5 @@
 "use strict";
 import { commands, ExtensionContext, window } from "vscode";
-import { isContext } from "vm";
 
 export function activate(context: ExtensionContext) {
   const commandId = "extension.newModuleFromTemplate";
