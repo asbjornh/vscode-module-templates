@@ -1,8 +1,8 @@
 # Module Templates
 
-A flexible VSCode extension for creating file/folder templates for new modules.
+A flexible VSCode extension for creating (and using) file/folder templates.
 
-_There are no templates included with this extension_. This means that you'll have to do the hard work yourself, but it also means that you can use this with any language/framework that you want.
+**There are no templates included with this extension**. This means that you'll have to do the hard work yourself, but it also means that you can use this with any language/framework you want.
 
 ![Screen capture](screencap.gif)
 
@@ -14,7 +14,7 @@ Use the plugin either by right clicking in the file explorer and selecting `New 
 
 Templates are defined in VS Code settings. If your code is shared by many people it can be nice to put templates in workspace settings (`.vscode/settings.json`) so that they can be used by everyone!
 
-Below is a config example, showing how a template for a React component can be defined. The example template defines a folder, a `.jsx` file and a `.scss` file.
+Below is a config example, showing how a template for a React component can be defined. The example template defines a folder, a `.jsx` file and an `.scss` file.
 
 ```json
 {
@@ -37,7 +37,7 @@ Below is a config example, showing how a template for a React component can be d
         },
         {
           "name": "{name.raw}.scss",
-          "content": [".{name-kebab} {}"]
+          "content": [".{name.kebab} {}"]
         }
       ]
     }
