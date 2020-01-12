@@ -1,12 +1,15 @@
 import * as fs from "fs";
-import { workspace } from "vscode";
+import { Uri, window, workspace } from "vscode";
 
-export function createFile(name: string) {
-  const path = workspace.workspaceFolders
+export function createFile(name: string, uri: Uri | undefined) {
+  const path = uri
+    ? uri.fsPath
+    : workspace.workspaceFolders
     ? workspace.workspaceFolders[0].uri.fsPath
     : undefined;
 
   if (!path) {
+    window.showErrorMessage("No output path found");
     throw new Error("No path found");
   }
 

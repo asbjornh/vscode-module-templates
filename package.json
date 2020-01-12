@@ -35,7 +35,15 @@
         "command": "extension.newModuleFromTemplate",
         "title": "New From Template"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "extension.newModuleFromTemplate",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "dependencies": {},
   "devDependencies": {
