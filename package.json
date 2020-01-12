@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
+    "vscode:prepublish": "tsc",
     "build": "tsc"
   },
   "repository": {
