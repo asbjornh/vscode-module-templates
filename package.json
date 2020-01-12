@@ -22,5 +22,11 @@
   "bugs": {
     "url": "https://github.com/asbjornh/vscode-module-templates/issues"
   },
-  "homepage": "https://github.com/asbjornh/vscode-module-templates#readme"
+  "homepage": "https://github.com/asbjornh/vscode-module-templates#readme",
+  "dependencies": {
+    "typescript": "^3.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.6"
+  }
 }
