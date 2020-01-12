@@ -51,7 +51,42 @@
         "module-templates.templates": {
           "type": "array",
           "default": [],
-          "description": "A list of templates. See readme for how to create a template."
+          "description": "A list of templates. See readme for how to create a template.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["displayName", "files"],
+            "properties": {
+              "displayName": { "type": "string" },
+              "defaultPath": {
+                "type": "string",
+                "description": "Where to put module when the path is unknown, such as when running from the command palette"
+              },
+              "folder": {
+                "type": "string",
+                "description": "Optional folder name. If empty, no folder is created"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["name", "content"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the file"
+                    },
+                    "content": {
+                      "type": "array",
+                      "description": "The content of the file as a list of strings",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
