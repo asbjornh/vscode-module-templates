@@ -1,16 +1,38 @@
 "use strict";
 import { commands, ExtensionContext, Uri, window } from "vscode";
 
-import { createFile } from "./utils";
+import { createFiles, getConfig } from "./utils";
 
 async function newFromTemplate(uri: Uri | undefined) {
+  const templates = getConfig().templates;
+
+  if (!templates || templates.length === 0) {
+    window.showErrorMessage(
+      "No templates found. Add some to your user or workspace settings!"
+    );
+    return;
+  }
+
   const moduleName = await window.showInputBox({
     prompt: "Enter module name"
   });
 
   if (!moduleName) return;
 
-  createFile(moduleName, uri);
+  if (templates.length === 1) {
+    const [template] = templates;
+    createFiles(moduleName, uri, template);
+  } else {
+    const result = await window.showQuickPick(
+      templates.map(template => ({
+        label: template.displayName,
+        value: template
+      })),
+      { placeHolder: "Select a template" }
+    );
+    if (!result) return;
+    createFiles(moduleName, uri, result.value);
+  }
 }
 
 export function activate(context: ExtensionContext) {
@@ -25,3 +47,5 @@ export function activate(context: ExtensionContext) {
 
   context.subscriptions.push(command);
 }
+
+export function deactivate() {}

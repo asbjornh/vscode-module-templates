@@ -43,9 +43,22 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Module Templates",
+      "properties": {
+        "module-templates.templates": {
+          "type": "array",
+          "default": [],
+          "description": "A list of templates. See readme for how to create a template."
+        }
+      }
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "fs-extra": "^8.1.0"
+  },
   "devDependencies": {
     "@types/node": "^13.1.6",
     "typescript": "^3.7.4",
