@@ -1,6 +1,8 @@
 "use strict";
 import { commands, ExtensionContext, window } from "vscode";
 
+import { createFile } from "./utils";
+
 async function newFromTemplate() {
   const moduleName = await window.showInputBox({
     prompt: "Enter module name"
@@ -8,7 +10,7 @@ async function newFromTemplate() {
 
   if (!moduleName) return;
 
-  window.showInformationMessage(moduleName);
+  createFile(moduleName);
 }
 
 export function activate(context: ExtensionContext) {
