@@ -6,8 +6,8 @@
   "version": "0.1.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
-    "vscode:prepublish": "tsc",
-    "build": "tsc"
+    "vscode:prepublish": "webpack",
+    "build": "webpack"
   },
   "dependencies": {
     "change-case": "^4.1.1",
@@ -16,13 +16,18 @@
   "devDependencies": {
     "@types/node": "^13.1.6",
     "@types/vscode": "^1.41.0",
-    "typescript": "^3.7.4"
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/asbjornh/vscode-module-templates.git"
   },
-  "categories": ["Snippets"],
+  "categories": [
+    "Snippets"
+  ],
   "keywords": [
     "module",
     "template",
@@ -39,7 +44,7 @@
   "engines": {
     "vscode": "^1.41.1"
   },
-  "main": "dist/source/extension.js",
+  "main": "dist/extension.js",
   "activationEvents": [
     "onCommand:extension.newModuleFromTemplate"
   ],
