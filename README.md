@@ -65,7 +65,7 @@ Required. A list of file templates.
 
 ### file.name
 
-Required. A name for the file to create (with file extension). Supports replacement tokens (see below).
+Required. A name for the file to create (with file extension). Supports replacement tokens (see below). This property can also be a path (in case you need to add sub folders).
 
 ### file.content
 

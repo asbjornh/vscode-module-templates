@@ -42,13 +42,11 @@ export function createFiles(
     : undefined;
   const fullPath = folderName ? `${path}/${folderName}` : path;
 
-  fse.ensureDirSync(fullPath);
-
   template.files.forEach(({ name, content }) => {
     const fileName = replaceTokens(name, moduleName);
     const fileContent = content
       .map(line => replaceTokens(line, moduleName))
       .join("\n");
-    fs.writeFileSync(`${fullPath}/${fileName}`, fileContent);
+    fse.outputFileSync(`${fullPath}/${fileName}`, fileContent);
   });
 }
