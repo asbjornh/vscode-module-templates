@@ -4,11 +4,11 @@ import { commands, ExtensionContext, Uri, window } from "vscode";
 import { createFiles, getConfig } from "./utils";
 
 async function newFromTemplate(uri: Uri | undefined) {
-  const templates = getConfig().templates;
+  const templates = getConfig(uri).templates;
 
   if (!templates || templates.length === 0) {
     window.showErrorMessage(
-      "No templates found. Add some to your user or workspace settings!"
+      "No templates found. Add some to your user, workspace or folder settings!"
     );
     return;
   }

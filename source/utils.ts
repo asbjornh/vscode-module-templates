@@ -1,12 +1,13 @@
-import * as fs from "fs";
 import * as fse from "fs-extra";
 import { Uri, window, workspace } from "vscode";
 import { pascalCase, paramCase, camelCase, snakeCase } from "change-case";
 
 import { Config, Template } from "./config";
 
-export function getConfig() {
-  return workspace.getConfiguration("module-templates") as Config;
+export function getConfig(uri: Uri | undefined) {
+  const currentUri = uri || window.activeTextEditor?.document.uri;
+  const wsFolder = currentUri && workspace.getWorkspaceFolder(currentUri);
+  return workspace.getConfiguration("module-templates", wsFolder) as Config;
 }
 
 const replaceTokens = (input: string, newValue: string) =>

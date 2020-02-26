@@ -3,7 +3,7 @@
   "displayName": "Module Templates",
   "publisher": "asbjornh",
   "icon": "icon.png",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
     "vscode:prepublish": "webpack",
@@ -68,6 +68,7 @@
       "title": "Module Templates",
       "properties": {
         "module-templates.templates": {
+          "scope": "resource",
           "type": "array",
           "default": [],
           "description": "A list of templates. See readme for how to create a template.",
