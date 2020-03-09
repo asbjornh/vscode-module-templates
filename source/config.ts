@@ -8,6 +8,7 @@ export type Template = {
   defaultPath?: string;
   files: FileTemplate[];
   folder?: string;
+  questions?: { [key: string]: string };
 };
 
 export type Config = {

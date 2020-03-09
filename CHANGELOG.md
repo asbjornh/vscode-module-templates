@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Adds support for additional prompts
+
 ## 0.3.0
 
 - Adds support for multi-root workspaces

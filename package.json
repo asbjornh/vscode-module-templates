@@ -3,7 +3,7 @@
   "displayName": "Module Templates",
   "publisher": "asbjornh",
   "icon": "icon.png",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
     "vscode:prepublish": "webpack",
@@ -90,6 +90,9 @@
               "folder": {
                 "type": "string",
                 "description": "Optional folder name. If empty, no folder is created"
+              },
+              "questions": {
+                "type": "object"
               },
               "files": {
                 "type": "array",

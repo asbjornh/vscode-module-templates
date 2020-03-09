@@ -23,6 +23,9 @@ Below is a config example, showing how a template for a React component can be d
       "displayName": "React component",
       "defaultPath": "source/components",
       "folder": "{name.raw}",
+      "questions": {
+        "className": "HTML class name"
+      },
       "files": [
         {
           "name": "{name.raw}.jsx",
@@ -30,7 +33,7 @@ Below is a config example, showing how a template for a React component can be d
             "import React from 'react';",
             "",
             "const {name.pascal} = () =>",
-            "  <div className=\"{name.kebab}\" />",
+            "  <div className=\"{className.kebab}\" />",
             "",
             "export default {name.pascal};"
           ]
@@ -71,9 +74,31 @@ Required. A name for the file to create (with file extension). Supports replacem
 
 Required. The content of the file to create, given as an array of strings. Supports replacement tokens (see below).
 
+### questions
+
+Optional. A dictionary of additional questions to ask when using the template. Object keys are used as replacement token names, and object values are used as descriptive text in the prompt window. All casing alternatives (such as `pascal` or `kebab`) are available for the new replacement tokens.
+
+```js
+{
+  "questions": {
+    "myQuestion": "Some description",
+    "myOtherQuestion": "Some other description"
+  },
+  "files": [
+    {
+      "name": "{name.raw}.md",
+      "content": [
+        "{myQuestion.raw}", // Outputs the answer from the prompt
+        "{myOtherQuestion.kebab}" // Outputs the answer from the prompt
+      ]
+    }
+  ]
+}
+```
+
 ## Replacement tokens
 
-When creating a new module from a template, the extension will ask for a name for the new module. This name can be referenced in templates (in `folder`, `file.name` and `file.content`) with some different casing alternatives.
+When creating a new module from a template, the extension will ask for a name for the new module. This name can be referenced in templates (in `folder`, `file.name` and `file.content`) with some different casing alternatives. If your template has `questions`, the names of these questions can be referenced as well.
 
 In the following example, a folder will be created using a PascalCase version of what was typed into the input box.
 

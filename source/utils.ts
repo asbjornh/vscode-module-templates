@@ -10,18 +10,33 @@ export function getConfig(uri: Uri | undefined) {
   return workspace.getConfiguration("module-templates", wsFolder) as Config;
 }
 
-const replaceTokens = (input: string, newValue: string) =>
+const pattern = (name, type) => new RegExp(`{${name}\.${type}}`, "g");
+
+const replaceToken = (input: string, name: string, value: string) =>
   input
-    .replace(/{name\.raw}/g, newValue)
-    .replace(/{name\.pascal}/g, pascalCase(newValue))
-    .replace(/{name\.kebab}/g, paramCase(newValue))
-    .replace(/{name\.camel}/g, camelCase(newValue))
-    .replace(/{name\.snake}/g, snakeCase(newValue));
+    .replace(pattern(name, "raw"), value)
+    .replace(pattern(name, "pascal"), pascalCase(value))
+    .replace(pattern(name, "kebab"), paramCase(value))
+    .replace(pattern(name, "camel"), camelCase(value))
+    .replace(pattern(name, "snake"), snakeCase(value));
+
+const replaceManyTokens = (
+  input: string,
+  tokenMap: { [key: string]: string }
+) =>
+  Object.entries(tokenMap).reduce(
+    (acc, [name, value]) => replaceToken(acc, name, value),
+    input
+  );
+
+const replaceName = (input: string, value: string) =>
+  replaceToken(input, "name", value);
 
 export function createFiles(
   moduleName: string,
   uri: Uri | undefined,
-  template: Template
+  template: Template,
+  answers: { [key: string]: string }
 ) {
   const workspaceRoot = workspace.workspaceFolders?.[0].uri.fsPath;
 
@@ -39,14 +54,15 @@ export function createFiles(
     : workspaceRoot;
 
   const folderName = template.folder
-    ? replaceTokens(template.folder, moduleName)
+    ? replaceName(template.folder, moduleName)
     : undefined;
   const fullPath = folderName ? `${path}/${folderName}` : path;
 
   template.files.forEach(({ name, content }) => {
-    const fileName = replaceTokens(name, moduleName);
+    const fileName = replaceName(name, moduleName);
     const fileContent = content
-      .map(line => replaceTokens(line, moduleName))
+      .map(line => replaceName(line, moduleName))
+      .map(line => replaceManyTokens(line, answers))
       .join("\n");
     fse.outputFileSync(`${fullPath}/${fileName}`, fileContent);
   });

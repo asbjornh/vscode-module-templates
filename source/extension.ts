@@ -3,6 +3,25 @@ import { commands, ExtensionContext, Uri, window } from "vscode";
 
 import { createFiles, getConfig } from "./utils";
 
+async function promptAnswers(
+  questions: [string, string][]
+): Promise<[string, string | undefined][]> {
+  const [first, ...rest] = questions;
+  const [key, prompt] = first;
+  const firstAnswer = await window.showInputBox({ prompt });
+  return rest.length > 0
+    ? [[key, firstAnswer], ...(await promptAnswers(rest))]
+    : [[key, firstAnswer]];
+}
+
+async function getAnswersForTemplate(questions: object | undefined) {
+  if (!questions) return {};
+  const answers = await promptAnswers(Object.entries(questions));
+  return answers
+    .filter(([, value]) => value)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+}
+
 async function newFromTemplate(uri: Uri | undefined) {
   const templates = getConfig(uri).templates;
 
@@ -21,7 +40,8 @@ async function newFromTemplate(uri: Uri | undefined) {
 
   if (templates.length === 1) {
     const [template] = templates;
-    createFiles(moduleName, uri, template);
+    const answers = await getAnswersForTemplate(template.questions);
+    createFiles(moduleName, uri, template, answers);
   } else {
     const result = await window.showQuickPick(
       templates.map(template => ({
@@ -31,7 +51,8 @@ async function newFromTemplate(uri: Uri | undefined) {
       { placeHolder: "Select a template" }
     );
     if (!result) return;
-    createFiles(moduleName, uri, result.value);
+    const answers = await getAnswersForTemplate(result.value.questions);
+    createFiles(moduleName, uri, result.value, answers);
   }
 }
 
