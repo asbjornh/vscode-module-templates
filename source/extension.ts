@@ -32,27 +32,21 @@ async function newFromTemplate(uri: Uri | undefined) {
     return;
   }
 
-  const moduleName = await window.showInputBox({
-    prompt: "Enter module name"
-  });
-
-  if (!moduleName) return;
-
   if (templates.length === 1) {
     const [template] = templates;
     const answers = await getAnswersForTemplate(template.questions);
-    createFiles(moduleName, uri, template, answers);
+    createFiles(uri, template, answers);
   } else {
     const result = await window.showQuickPick(
-      templates.map(template => ({
+      templates.map((template) => ({
         label: template.displayName,
-        value: template
+        value: template,
       })),
       { placeHolder: "Select a template" }
     );
     if (!result) return;
     const answers = await getAnswersForTemplate(result.value.questions);
-    createFiles(moduleName, uri, result.value, answers);
+    createFiles(uri, result.value, answers);
   }
 }
 

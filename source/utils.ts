@@ -10,6 +10,19 @@ export function getConfig(uri: Uri | undefined) {
   return workspace.getConfiguration("module-templates", wsFolder) as Config;
 }
 
+type TokenMap = { [key: string]: string };
+
+// NOTE: The hard coded question for 'name' has been removed. Notify unsuspecting victims of this change.
+const checkLegacyPattern = (input: string, tokenMap: TokenMap) => {
+  if (input.includes("{name.") && !tokenMap.name) {
+    window.showErrorMessage(
+      "Missing value for 'name' token. This is probably caused by breaking changes in this plugin. See [the readme](https://github.com/asbjornh/vscode-module-templates/blob/master/README.md#migrating-to-v1) for how to fix this.",
+      "Close" // NOTE: Force expanded view
+    );
+    throw Error("Missing value for token 'name'");
+  }
+};
+
 const pattern = (name, type) => new RegExp(`{${name}\.${type}}`, "g");
 
 const replaceToken = (input: string, name: string, value: string) =>
@@ -20,20 +33,14 @@ const replaceToken = (input: string, name: string, value: string) =>
     .replace(pattern(name, "camel"), camelCase(value))
     .replace(pattern(name, "snake"), snakeCase(value));
 
-const replaceManyTokens = (
-  input: string,
-  tokenMap: { [key: string]: string }
-) =>
-  Object.entries(tokenMap).reduce(
-    (acc, [name, value]) => replaceToken(acc, name, value),
-    input
-  );
-
-const replaceName = (input: string, value: string) =>
-  replaceToken(input, "name", value);
+const replaceManyTokens = (input: string, tokenMap: TokenMap) => {
+  checkLegacyPattern(input, tokenMap);
+  return Object.entries(tokenMap).reduce((acc, [name, value]) => {
+    return replaceToken(acc, name, value);
+  }, input);
+};
 
 export function createFiles(
-  moduleName: string,
   uri: Uri | undefined,
   template: Template,
   answers: { [key: string]: string }
@@ -54,15 +61,14 @@ export function createFiles(
     : workspaceRoot;
 
   const folderName = template.folder
-    ? replaceName(template.folder, moduleName)
+    ? replaceManyTokens(template.folder, answers)
     : undefined;
   const fullPath = folderName ? `${path}/${folderName}` : path;
 
   template.files.forEach(({ name, content }) => {
-    const fileName = replaceName(name, moduleName);
+    const fileName = replaceManyTokens(name, answers);
     const fileContent = content
-      .map(line => replaceName(line, moduleName))
-      .map(line => replaceManyTokens(line, answers))
+      .map((line) => replaceManyTokens(line, answers))
       .join("\n");
     fse.outputFileSync(`${fullPath}/${fileName}`, fileContent);
   });

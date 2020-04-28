@@ -24,6 +24,7 @@ Below is a config example, showing how a template for a React component can be d
       "defaultPath": "source/components",
       "folder": "{name.raw}",
       "questions": {
+        "name": "Component name",
         "className": "HTML class name"
       },
       "files": [
@@ -76,11 +77,12 @@ Required. The content of the file to create, given as an array of strings. Suppo
 
 ### questions
 
-Optional. A dictionary of additional questions to ask when using the template. Object keys are used as replacement token names, and object values are used as descriptive text in the prompt window. All casing alternatives (such as `pascal` or `kebab`) are available for the new replacement tokens.
+Optional. A dictionary of questions to ask when using the template. Object keys are used as replacement token names, and object values are used as description text in the prompt window. Many casing alternatives (such as `pascal` or `kebab`) are available for the replacement tokens.
 
-```js
+```json
 {
   "questions": {
+    "name": "File name",
     "myQuestion": "Some description",
     "myOtherQuestion": "Some other description"
   },
@@ -98,20 +100,58 @@ Optional. A dictionary of additional questions to ask when using the template. O
 
 ## Replacement tokens
 
-When creating a new module from a template, the extension will ask for a name for the new module. This name can be referenced in templates (in `folder`, `file.name` and `file.content`) with some different casing alternatives. If your template has `questions`, the names of these questions can be referenced as well.
+If your template defines `questions`, you can use the answers to those questions in the `folder`, `file.name` and `file.content` fields. The syntax for referencing an answer is `{<question-key>.<casing-alternative>}` (if you specified the question `name` and want the answer output as kebab-case, you'd write `{name.kebab}`.
 
-In the following example, a folder will be created using a PascalCase version of what was typed into the input box.
+In the following example, a folder will be created using a kebab-case version of what was typed into the input box for the `componentName` question.
 
 ```json
 {
-  "folder": "{name.pascal}"
+  "module-templates.templates": [
+    {
+      "displayName": "React component",
+      "folder": "{componentName.kebab}",
+      "questions": {
+        "componentName": "Component name"
+      }
+    }
+  ]
 }
 ```
 
-### List of tokens
+### Casing alternatives
 
-- `{name.raw}`: Unmodified name from input box
-- `{name.pascal}`: PascalCased name
-- `{name.kebab}`: kebab-cased name
-- `{name.camel}`: camelCased name
-- `{name.snake}`: snake_cased name
+- `{<question-key>.raw}`: Unmodified name from input box
+- `{<question-key>.pascal}`: PascalCased name
+- `{<question-key>.kebab}`: kebab-cased name
+- `{<question-key>.camel}`: camelCased name
+- `{<question-key>.snake}`: snake_cased name
+
+## Migrating to V1
+
+Versions of this plugin prior to `1.0.0` would always ask for a module name, and would therefore always support the `{name}` replacement token. In `1.0.0` the prompt for `{name}` was removed. This means that most templates created for older versions will not work anymore.
+
+### How to make templates work again
+
+To make broken templates work after upgrading to `1.0.0` add a `name` question to your templates, like so:
+
+```json
+{
+  "module-templates.templates": [
+    {
+      "displayName": "React component",
+      "folder": "{name.raw}",
+      "questions": {
+        "name": "Component name" // <- Add this
+      },
+      "files": [
+        {
+          "name": "{name.raw}.jsx",
+          "content": []
+        }
+      ]
+    }
+  ]
+}
+```
+
+If you're experiencing issues after adding a `name` question, please submit an issue.
