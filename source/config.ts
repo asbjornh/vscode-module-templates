@@ -4,10 +4,13 @@ export type FileTemplate = {
 };
 
 export type Template = {
-  displayName: string;
+  displayName?: string;
   defaultPath?: string;
+  extends?: string[];
   files: FileTemplate[];
   folder?: string;
+  hidden?: boolean;
+  id?: string;
   questions?: { [key: string]: string };
 };
 

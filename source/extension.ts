@@ -1,10 +1,10 @@
 "use strict";
 import { commands, ExtensionContext, Uri, window } from "vscode";
 
-import { createFiles, getConfig } from "./utils";
+import { createFiles, getConfig, resolveInheritance } from "./utils";
 
 async function promptAnswers(
-  questions: [string, string][]
+  questions: [string, string][],
 ): Promise<[string, string | undefined][]> {
   const [first, ...rest] = questions;
   const [key, prompt] = first;
@@ -27,26 +27,30 @@ async function newFromTemplate(uri: Uri | undefined) {
 
   if (!templates || templates.length === 0) {
     window.showErrorMessage(
-      "No templates found. Add some to your user, workspace or folder settings!"
+      "No templates found. Add some to your user, workspace or folder settings!",
     );
     return;
   }
 
   if (templates.length === 1) {
-    const [template] = templates;
+    const [firstTemplate] = templates;
+    const template = resolveInheritance(firstTemplate, templates);
     const answers = await getAnswersForTemplate(template.questions);
     createFiles(uri, template, answers);
   } else {
     const result = await window.showQuickPick(
-      templates.map((template) => ({
-        label: template.displayName,
-        value: template,
-      })),
-      { placeHolder: "Select a template" }
+      templates
+        .filter(({ displayName }) => displayName)
+        .map(template => ({
+          label: template.displayName!,
+          value: template,
+        })),
+      { placeHolder: "Select a template" },
     );
     if (!result) return;
-    const answers = await getAnswersForTemplate(result.value.questions);
-    createFiles(uri, result.value, answers);
+    const template = resolveInheritance(result.value, templates);
+    const answers = await getAnswersForTemplate(template.questions);
+    createFiles(uri, template, answers);
   }
 }
 
@@ -57,7 +61,7 @@ export function activate(context: ExtensionContext) {
     commandId,
     (uri: Uri | undefined) => {
       newFromTemplate(uri);
-    }
+    },
   );
 
   context.subscriptions.push(command);

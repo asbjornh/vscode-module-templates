@@ -3,7 +3,7 @@
   "displayName": "Module Templates",
   "publisher": "asbjornh",
   "icon": "icon.png",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
     "vscode:prepublish": "webpack",
@@ -76,7 +76,6 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "displayName",
               "files"
             ],
             "properties": {
@@ -87,10 +86,12 @@
                 "type": "string",
                 "description": "Where to put module when the path is unknown, such as when running from the command palette"
               },
+              "extends": { "type": "array", "items": { "type": "string" }},
               "folder": {
                 "type": "string",
                 "description": "Optional folder name. If empty, no folder is created"
               },
+              "id": { "type": "string" },
               "questions": {
                 "type": "object"
               },

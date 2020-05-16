@@ -17,7 +17,7 @@ const checkLegacyPattern = (input: string, tokenMap: TokenMap) => {
   if (input.includes("{name.") && !tokenMap.name) {
     window.showErrorMessage(
       "Missing value for 'name' token. This is probably caused by breaking changes in this plugin. See [the readme](https://github.com/asbjornh/vscode-module-templates/blob/master/README.md#migrating-to-v1) for how to fix this.",
-      "Close" // NOTE: Force expanded view
+      "Close", // NOTE: Force expanded view
     );
     throw Error("Missing value for token 'name'");
   }
@@ -40,16 +40,41 @@ const replaceManyTokens = (input: string, tokenMap: TokenMap) => {
   }, input);
 };
 
+export function resolveInheritance(template: Template, templates: Template[]) {
+  if (!template.extends || template.extends.length === 0) return template;
+  const inheritedData = template.extends.map(id => {
+    const data = templates.find(template => template.id === id);
+    if (!data) {
+      const msg = `Template extends '${id}', which was not found.`;
+      window.showErrorMessage(msg);
+      throw Error(msg);
+    }
+    return resolveInheritance(data, templates);
+  });
+  const combined: Template = [...inheritedData, template].reduce(
+    (accum: Template, data) => ({
+      ...accum,
+      ...data,
+      extends: [],
+      files: [...accum.files, ...data.files],
+      id: template.id,
+      questions: { ...accum.questions, ...data.questions },
+    }),
+    { displayName: template.displayName, files: [] },
+  );
+  return combined;
+}
+
 export function createFiles(
   uri: Uri | undefined,
   template: Template,
-  answers: { [key: string]: string }
+  answers: { [key: string]: string },
 ) {
   const workspaceRoot = workspace.workspaceFolders?.[0].uri.fsPath;
 
   if (!workspaceRoot && !uri) {
     window.showErrorMessage(
-      "When running 'New From Template' from the command palette, you must be in a workspace"
+      "When running 'New From Template' from the command palette, you must be in a workspace",
     );
     return;
   }
@@ -68,7 +93,7 @@ export function createFiles(
   template.files.forEach(({ name, content }) => {
     const fileName = replaceManyTokens(name, answers);
     const fileContent = content
-      .map((line) => replaceManyTokens(line, answers))
+      .map(line => replaceManyTokens(line, answers))
       .join("\n");
     fse.outputFileSync(`${fullPath}/${fileName}`, fileContent);
   });

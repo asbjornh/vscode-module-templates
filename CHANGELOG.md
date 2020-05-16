@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Adds support for composition / inheritance of templates
+
 ## 1.0.0
 
 - BREAKING: Removes module name question. This must now be provided in `template.questions` instead.

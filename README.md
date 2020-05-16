@@ -53,11 +53,15 @@ Below is a config example, showing how a template for a React component can be d
 
 ### displayName
 
-Required. This name is used when selecting a template to create from.
+Optional. This name is used when selecting a template to create from. If this property is empty, the template will not be shown in the template selector (this can be useful if you create templates that are just for inheritance).
 
 ### defaultPath
 
 Optional. A path relative to the workspace root. When running the extension from the command palette files will be output to this path. When running from the right-click menu this option has no effect.
+
+### extends
+
+Optional. List of template ids (string). When set, the template objects corresponding to the given ids are merged into the current template (overriding left to right, current template last). Questions are also merged, and files are concatenated. In short, you get all properties, files and questions from the inherited templates. See below for example.
 
 ### folder
 
@@ -74,6 +78,10 @@ Required. A name for the file to create (with file extension). Supports replacem
 ### file.content
 
 Required. The content of the file to create, given as an array of strings. Supports replacement tokens (see below).
+
+### id
+
+Optional (string). Setting an `id` for a template lets you use that template in other templates. See `extends`.
 
 ### questions
 
@@ -125,6 +133,48 @@ In the following example, a folder will be created using a kebab-case version of
 - `{<question-key>.kebab}`: kebab-cased name
 - `{<question-key>.camel}`: camelCased name
 - `{<question-key>.snake}`: snake_cased name
+
+## Composition / inheritance
+
+From version `1.1.0` it's possible to combine templates to create new ones. Templates can be given an `id`, which can be referenced from other templates using `extends` (see `extends` option above for more technical details). When referencing a template `id` in `extends`, you inherit all properties, questions and files from that template. You can inherit multiple templates. Inheritance is recursive, so you can inherit other templates that inherit something else and so on.
+
+By omitting `displayName` from templates, you can create hidden templates that are only used to create other templates. In the example below, only "React component with SCSS" will be available when selecting templates.
+
+```json
+{
+  "module-templates.templates": [
+    {
+      "id": "jsx-file",
+      "files": [
+        {
+          "name": "{name.kebab}.jsx",
+          "content": [
+            "const {name.pascal} = () => null;",
+            "export default {name.pascal};"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scss-file",
+      "files": [
+        {
+          "name": "{name.kebab}.scss",
+          "content": [".{name.kebab} {}"]
+        }
+      ]
+    },
+    {
+      "extends": ["jsx-file", "scss-files"],
+      "defaultPath": "source/components",
+      "displayName": "React component with SCSS",
+      "folder": "{name.kebab}",
+      "questions": { "name": "Component name" },
+      "files": []
+    }
+  ]
+}
+```
 
 ## Migrating to V1
 
