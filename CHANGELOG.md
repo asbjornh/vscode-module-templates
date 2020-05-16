@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Fixes typo in inheritance example
+
 ## 1.1.0
 
 - Adds support for composition / inheritance of templates

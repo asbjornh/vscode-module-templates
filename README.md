@@ -165,7 +165,7 @@ By omitting `displayName` from templates, you can create hidden templates that a
       ]
     },
     {
-      "extends": ["jsx-file", "scss-files"],
+      "extends": ["jsx-file", "scss-file"],
       "defaultPath": "source/components",
       "displayName": "React component with SCSS",
       "folder": "{name.kebab}",
