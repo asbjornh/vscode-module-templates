@@ -1,57 +1,29 @@
 "use strict";
 import { commands, ExtensionContext, Uri, window } from "vscode";
+import * as fse from "fs-extra";
 
-import { createFiles, getConfig, resolveInheritance } from "./utils";
-
-async function promptAnswers(
-  questions: [string, string][],
-): Promise<[string, string | undefined][]> {
-  const [first, ...rest] = questions;
-  const [key, prompt] = first;
-  const firstAnswer = await window.showInputBox({ prompt });
-  return rest.length > 0
-    ? [[key, firstAnswer], ...(await promptAnswers(rest))]
-    : [[key, firstAnswer]];
-}
-
-async function getAnswersForTemplate(questions: object | undefined) {
-  if (!questions) return {};
-  const answers = await promptAnswers(Object.entries(questions));
-  return answers
-    .filter(([, value]) => value)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
-}
+import { getFolderPath } from "./utils";
+import { maybeRender, render } from "./render";
+import ask from "./ask-questions";
+import getTemplate from "./get-template";
 
 async function newFromTemplate(uri: Uri | undefined) {
-  const templates = getConfig(uri).templates;
+  const template = await getTemplate(uri);
 
-  if (!templates || templates.length === 0) {
-    window.showErrorMessage(
-      "No templates found. Add some to your user, workspace or folder settings!",
-    );
-    return;
-  }
+  if (!template) return;
 
-  if (templates.length === 1) {
-    const [firstTemplate] = templates;
-    const template = resolveInheritance(firstTemplate, templates);
-    const answers = await getAnswersForTemplate(template.questions);
-    createFiles(uri, template, answers);
-  } else {
-    const result = await window.showQuickPick(
-      templates
-        .filter(({ displayName }) => displayName)
-        .map(template => ({
-          label: template.displayName!,
-          value: template,
-        })),
-      { placeHolder: "Select a template" },
+  const answers = await ask(template.questions);
+
+  template.files.forEach(({ name, content }) => {
+    const folderName = maybeRender(template.folder, answers);
+    const folderPath = getFolderPath(uri, folderName, template.defaultPath);
+    const fileName = render(name, answers);
+
+    fse.outputFileSync(
+      `${folderPath}/${fileName}`,
+      render(content.join("\n"), answers),
     );
-    if (!result) return;
-    const template = resolveInheritance(result.value, templates);
-    const answers = await getAnswersForTemplate(template.questions);
-    createFiles(uri, template, answers);
-  }
+  });
 }
 
 export function activate(context: ExtensionContext) {
