@@ -2,15 +2,15 @@ import { Uri, window } from "vscode";
 
 import { getConfig } from "./utils";
 import { Template } from "./config";
+import { showErrorAndThrow } from "./utils";
 
 export default async function getTemplate(uri: Uri | undefined) {
   const templates = getConfig(uri).templates;
 
   if (!templates || templates.length === 0) {
-    window.showErrorMessage(
+    showErrorAndThrow(
       "No templates found. Add some to your user, workspace or folder settings!",
     );
-    return;
   }
 
   if (templates.length === 1) {

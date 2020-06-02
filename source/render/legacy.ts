@@ -1,17 +1,13 @@
 import { window } from "vscode";
 import { pascalCase, paramCase, camelCase, snakeCase } from "change-case";
 
-type Dictionary = { [key: string]: string };
+import { Dictionary } from "./index";
 
-export function render(templateText: string, answers: Dictionary) {
-  return replaceManyTokens(templateText, answers);
-}
-
-export function maybeRender(
-  templateText: string | undefined,
-  answers: Dictionary,
-) {
-  return templateText ? render(templateText, answers) : undefined;
+export default function render(input: string, answers: Dictionary) {
+  checkLegacyPattern(input, answers);
+  return Object.entries(answers).reduce((acc, [name, value]) => {
+    return replaceToken(acc, name, value);
+  }, input);
 }
 
 const pattern = (name, type) => new RegExp(`{${name}\.${type}}`, "g");
@@ -23,13 +19,6 @@ const replaceToken = (input: string, name: string, value: string) =>
     .replace(pattern(name, "kebab"), paramCase(value))
     .replace(pattern(name, "camel"), camelCase(value))
     .replace(pattern(name, "snake"), snakeCase(value));
-
-const replaceManyTokens = (input: string, tokenMap: Dictionary) => {
-  checkLegacyPattern(input, tokenMap);
-  return Object.entries(tokenMap).reduce((acc, [name, value]) => {
-    return replaceToken(acc, name, value);
-  }, input);
-};
 
 // NOTE: The hard coded question for 'name' has been removed. Notify unsuspecting victims of this change.
 const checkLegacyPattern = (input: string, tokenMap: Dictionary) => {

@@ -1,27 +1,33 @@
 "use strict";
-import { commands, ExtensionContext, Uri, window } from "vscode";
+import { commands, ExtensionContext, Uri } from "vscode";
 import * as fse from "fs-extra";
 
-import { getFolderPath } from "./utils";
+import {
+  getConfig,
+  getEngine,
+  getFolderPath,
+  showErrorAndThrow,
+} from "./utils";
+
 import { maybeRender, render } from "./render";
 import ask from "./ask-questions";
 import getTemplate from "./get-template";
 
 async function newFromTemplate(uri: Uri | undefined) {
   const template = await getTemplate(uri);
-
   if (!template) return;
 
+  const engine = getEngine(uri);
   const answers = await ask(template.questions);
 
   template.files.forEach(({ name, content }) => {
-    const folderName = maybeRender(template.folder, answers);
+    const folderName = maybeRender(engine, template.folder, answers);
     const folderPath = getFolderPath(uri, folderName, template.defaultPath);
-    const fileName = render(name, answers);
+    const fileName = render(engine, name, answers);
 
     fse.outputFileSync(
       `${folderPath}/${fileName}`,
-      render(content.join("\n"), answers),
+      render(engine, content.join("\n"), answers),
     );
   });
 }

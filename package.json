@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "change-case": "^4.1.1",
-    "fs-extra": "^8.1.0"
+    "fs-extra": "^8.1.0",
+    "mustache": "^4.0.1"
   },
   "devDependencies": {
+    "@types/mustache": "^4.0.1",
     "@types/node": "^13.1.6",
     "@types/vscode": "^1.41.0",
     "ts-loader": "^6.2.1",
@@ -67,6 +69,14 @@
       "type": "object",
       "title": "Module Templates",
       "properties": {
+        "module-templates.engine": {
+          "type": "string",
+          "enum": [
+            "legacy",
+            "mustache"
+          ],
+          "default": "legacy"
+        },
         "module-templates.templates": {
           "scope": "resource",
           "type": "array",
@@ -86,12 +96,19 @@
                 "type": "string",
                 "description": "Where to put module when the path is unknown, such as when running from the command palette"
               },
-              "extends": { "type": "array", "items": { "type": "string" }},
+              "extends": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
               "folder": {
                 "type": "string",
                 "description": "Optional folder name. If empty, no folder is created"
               },
-              "id": { "type": "string" },
+              "id": {
+                "type": "string"
+              },
               "questions": {
                 "type": "object"
               },

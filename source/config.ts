@@ -14,6 +14,16 @@ export type Template = {
   questions?: { [key: string]: string };
 };
 
+const enginesDict = {
+  legacy: "legacy",
+  mustache: "mustache",
+};
+
+export const engines = Object.values(enginesDict);
+
+export type Engine = keyof typeof enginesDict;
+
 export type Config = {
+  engine?: Engine;
   templates?: Template[];
 };
