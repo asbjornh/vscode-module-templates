@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- Adds support for `handlebars` templates
+- Adds support for questions with default values
+- Adds support for questions with a predefined set of answers (shown as a dropdown)
+- Removes warning about missing `name` answer
+
 ## 1.1.1
 
 - Fixes typo in inheritance example
