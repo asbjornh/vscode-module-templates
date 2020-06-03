@@ -2,7 +2,6 @@ import { pascalCase, paramCase, camelCase, snakeCase } from "change-case";
 import { compile } from "handlebars";
 
 import { Answers } from "../ask-questions";
-import { Dictionary } from "./index";
 import { showModal } from "../utils";
 
 const value = (value, thisObj, options) =>
@@ -12,32 +11,24 @@ const value = (value, thisObj, options) =>
       : options.inverse(thisObj)
     : value;
 
+const stringTransform = transform => maybeString =>
+  typeof maybeString === "string" ? transform(maybeString) : maybeString;
+
 const helpers = {
   eq: function (a, b, options) {
     return value(a === b, this, options);
   },
+  pascal: stringTransform(pascalCase),
+  kebab: stringTransform(paramCase),
+  camel: stringTransform(camelCase),
+  snake: stringTransform(snakeCase),
 };
 
 export default function render(templateText: string, answers: Answers) {
   try {
-    return compile(templateText)(addCasings(answers), { helpers });
+    return compile(templateText)(answers, { helpers });
   } catch (error) {
-    showModal(error.message);
+    showModal(`Handlebars error:\n${error.message}`);
     throw error;
   }
 }
-
-const addCasings = (answers: Answers): Dictionary<any> =>
-  Object.entries(answers).reduce((accum, [key, value]) => {
-    const maybeCasings =
-      typeof value === "string"
-        ? {
-            raw: value,
-            pascal: pascalCase(value),
-            kebab: paramCase(value),
-            camel: camelCase(value),
-            snake: snakeCase(value),
-          }
-        : value;
-    return { ...accum, [key]: maybeCasings };
-  }, {});

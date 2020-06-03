@@ -3,6 +3,19 @@ export type FileTemplate = {
   content: string[];
 };
 
+type QuestionObj = {
+  defaultValue: string;
+  displayName: string;
+};
+
+export type QuestionAlternative = {
+  displayName: string;
+  value: {};
+};
+
+export type Question = string | QuestionObj | QuestionAlternative[];
+export type Questions = { [key: string]: Question };
+
 export type Template = {
   displayName?: string;
   defaultPath?: string;
@@ -11,7 +24,7 @@ export type Template = {
   folder?: string;
   hidden?: boolean;
   id?: string;
-  questions?: { [key: string]: string };
+  questions?: Questions;
 };
 
 const enginesDict = {
