@@ -1,27 +1,28 @@
 import { Engine } from "../config";
+import { Answers } from "../ask-questions";
 
-export type Dictionary = { [key: string]: string };
+export type Dictionary<T> = { [key: string]: T };
 
+import renderHandlebars from "./handlebars";
 import renderLegacy from "./legacy";
-import renderMustache from "./mustache";
 
 export function render(
   engine: Engine,
   templateText: string,
-  answers: Dictionary,
+  answers: Answers,
 ): string {
   switch (engine) {
+    case "handlebars":
+      return renderHandlebars(templateText, answers);
     case "legacy":
       return renderLegacy(templateText, answers);
-    case "mustache":
-      return renderMustache(templateText, answers);
   }
 }
 
 export function maybeRender(
   engine: Engine,
   templateText: string | undefined,
-  answers: Dictionary,
+  answers: Answers,
 ) {
   if (!templateText) return;
   return render(engine, templateText, answers);

@@ -16,7 +16,7 @@ export type Template = {
 
 const enginesDict = {
   legacy: "legacy",
-  mustache: "mustache",
+  handlebars: "handlebars",
 };
 
 export const engines = Object.values(enginesDict);

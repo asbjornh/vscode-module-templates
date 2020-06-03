@@ -7,6 +7,10 @@ export function showErrorAndThrow(message: string): never {
   throw new Error(message);
 }
 
+export function showModal(message: string) {
+  window.showInformationMessage(message, { modal: true });
+}
+
 export function getConfig(uri: Uri | undefined) {
   const currentUri = uri || window.activeTextEditor?.document.uri;
   const wsFolder = currentUri && workspace.getWorkspaceFolder(currentUri);

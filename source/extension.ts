@@ -2,13 +2,7 @@
 import { commands, ExtensionContext, Uri } from "vscode";
 import * as fse from "fs-extra";
 
-import {
-  getConfig,
-  getEngine,
-  getFolderPath,
-  showErrorAndThrow,
-} from "./utils";
-
+import { getEngine, getFolderPath } from "./utils";
 import { maybeRender, render } from "./render";
 import ask from "./ask-questions";
 import getTemplate from "./get-template";

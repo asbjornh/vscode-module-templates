@@ -1,5 +1,9 @@
 import { window } from "vscode";
 
+import { Dictionary } from "./render";
+
+export type Answers = Dictionary<string>;
+
 async function promptAnswers(
   questions: [string, string][],
 ): Promise<[string, string | undefined][]> {
@@ -11,7 +15,9 @@ async function promptAnswers(
     : [[key, firstAnswer]];
 }
 
-export default async function ask(questions: object | undefined) {
+export default async function ask(
+  questions: object | undefined,
+): Promise<Answers> {
   if (!questions) return {};
   const answers = await promptAnswers(Object.entries(questions));
   return answers
