@@ -2,12 +2,25 @@ import { Uri, window } from "vscode";
 
 import { getConfig } from "./utils";
 import { Template } from "./config";
-import { showErrorAndThrow } from "./utils";
+import { readJson, showErrorAndThrow } from "./utils";
 
 export default async function getTemplate(uri: Uri | undefined) {
-  const templates = getConfig(uri).templates;
+  const config = getConfig(uri);
+  const templatesFromConfig = config.templates || [];
+  const templateFiles = config.templateFiles || [];
 
-  if (!templates || templates.length === 0) {
+  const templatesFromFiles: Template[] = templateFiles
+    .map(filePath => {
+      const json = readJson(uri, filePath);
+      return Array.isArray(json)
+        ? json
+        : showErrorAndThrow(`Content in '${filePath}' is not an array`);
+    })
+    .flat();
+
+  const templates = [...templatesFromFiles, ...templatesFromConfig];
+
+  if (templates.length === 0) {
     showErrorAndThrow(
       "No templates found. Add some to your user, workspace or folder settings!",
     );

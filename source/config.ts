@@ -39,4 +39,5 @@ export type Engine = keyof typeof enginesDict;
 export type Config = {
   engine?: Engine;
   templates?: Template[];
+  templateFiles?: string[];
 };

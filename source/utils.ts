@@ -1,4 +1,7 @@
 import { Uri, window, workspace } from "vscode";
+import * as path from "path";
+import * as fse from "fs-extra";
+import untildify from "untildify";
 
 import { Config, Engine, engines } from "./config";
 
@@ -11,10 +14,33 @@ export function showModal(message: string) {
   window.showInformationMessage(message, { modal: true });
 }
 
-export function getConfig(uri: Uri | undefined) {
+function getWorkspaceRoot(uri: Uri | undefined) {
   const currentUri = uri || window.activeTextEditor?.document.uri;
-  const wsFolder = currentUri && workspace.getWorkspaceFolder(currentUri);
-  return workspace.getConfiguration("module-templates", wsFolder) as Config;
+  return currentUri && workspace.getWorkspaceFolder(currentUri);
+}
+
+function resolveFilePath(uri: Uri | undefined, filePath: string) {
+  if (path.isAbsolute(filePath)) return filePath;
+  if (filePath.startsWith("~")) return untildify(filePath);
+  const root = getWorkspaceRoot(uri);
+  return root
+    ? path.resolve(root.uri.fsPath, "./.vscode", filePath)
+    : showErrorAndThrow(`Couldn't resolve path for file '${filePath}'`);
+}
+
+// Reads a json file from an absolute path or a path relative to the `.vscode/settings.json` file for the current workspace
+export function readJson(uri: Uri | undefined, filePath: string) {
+  const resolvedPath = resolveFilePath(uri, filePath);
+  return fse.pathExistsSync(resolvedPath)
+    ? fse.readJsonSync(resolvedPath)
+    : showErrorAndThrow(`File not found: '${resolvedPath}'`);
+}
+
+export function getConfig(uri: Uri | undefined) {
+  return workspace.getConfiguration(
+    "module-templates",
+    getWorkspaceRoot(uri),
+  ) as Config;
 }
 
 export function getEngine(uri: Uri | undefined): Engine {

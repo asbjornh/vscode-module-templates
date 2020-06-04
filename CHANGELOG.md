@@ -4,7 +4,8 @@
 
 - Adds support for `handlebars` templates
 - Adds support for questions with default values
-- Adds support for questions with a predefined set of answers (shown as a dropdown)
+- Adds support for questions with a predefined set of answers
+- Adds support for external template files
 - Removes warning about missing `name` answer
 
 ## 1.1.1
