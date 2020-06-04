@@ -1,8 +1,8 @@
 # Module Templates
 
-A flexible VSCode extension for creating (and using) file/folder templates.
+A flexible VSCode extension for creating (and using) file/folder templates. If you're bored of typing the same boilerplate stuff every time you create a new thing, this might be for you.
 
-**There are no templates included with this extension**. This means that you'll have to do the hard work yourself, but it also means that you can use this with any language/framework you want.
+**There are no templates included with this extension**.
 
 ![Screen capture](screencap.gif)
 
@@ -18,30 +18,31 @@ Below is a config example, showing how a template for a React component can be d
 
 ```json
 {
+  "module-templates.engine": "handlebars",
   "module-templates.templates": [
     {
       "displayName": "React component",
       "defaultPath": "source/components",
-      "folder": "{name.raw}",
+      "folder": "{{kebab name}}",
       "questions": {
         "name": "Component name",
         "className": "HTML class name"
       },
       "files": [
         {
-          "name": "{name.raw}.jsx",
+          "name": "{{kebab name}}.jsx",
           "content": [
             "import React from 'react';",
             "",
-            "const {name.pascal} = () =>",
-            "  <div className=\"{className.kebab}\" />",
+            "const {{pascal name}} = () =>",
+            "  <div className=\"{{kebab className}}\" />",
             "",
-            "export default {name.pascal};"
+            "export default {{pascal name}};"
           ]
         },
         {
-          "name": "{name.raw}.scss",
-          "content": [".{name.kebab} {}"]
+          "name": "{{kebab name}}.scss",
+          "content": [".{{kebab className}} {}"]
         }
       ]
     }
@@ -51,92 +52,95 @@ Below is a config example, showing how a template for a React component can be d
 
 ## Configuration API
 
-### displayName
+### module-templates.engine
+
+Optional. `"legacy" | "handlebars"`.
+
+Use this to select what templating engine to use. For backward compatibility reasons `"legacy"` is currently the default, but the legacy engine might be deprecated and removed in the future. See below for details about the syntaxes for each engine.
+
+### module-templates.templateFiles
+
+Optional. `string[]`
+
+A list of file paths to load templates from. The files must be `json` files and the contents must match the schema of the `module-templates.templates` option.
+
+Paths can either be absolute, relative to the home directory (`~`) or relative to `.vscode/settings.json`. Relative paths will not work in user settings.
+
+### module-templates.templates
+
+An array of template objects. Templates have the following properties:
+
+#### displayName
 
 Optional. This name is used when selecting a template to create from. If this property is empty, the template will not be shown in the template selector (this can be useful if you create templates that are just for inheritance).
 
-### defaultPath
+#### defaultPath
 
 Optional. A path relative to the workspace root. When running the extension from the command palette files will be output to this path. When running from the right-click menu this option has no effect.
 
-### extends
+#### extends
 
 Optional. List of template ids (string). When set, the template objects corresponding to the given ids are merged into the current template (overriding left to right, current template last). Questions are also merged, and files are concatenated. In short, you get all properties, files and questions from the inherited templates. See below for example.
 
-### folder
+#### folder
 
-Optional. If this is option is set, a folder is created using the name from the option. Supports replacement tokens (see below).
+Optional. If this is option is set, a folder is created using the name from the option. This field is a template; you can use any syntax supported by the template engine.
 
-### files
+#### files
 
-Required. A list of file templates.
+Required. A list of file templates. File templates are objects with the following properties:
 
-### file.name
+- `name`: Required. A name for the file to create (with file extension). This field is a template; you can use any syntax supported by the template engine.
+- `content`: Required. The template for the file to create, given as an array of strings.
 
-Required. A name for the file to create (with file extension). Supports replacement tokens (see below). This property can also be a path (in case you need to add sub folders).
-
-### file.content
-
-Required. The content of the file to create, given as an array of strings. Supports replacement tokens (see below).
-
-### id
+#### id
 
 Optional (string). Setting an `id` for a template lets you use that template in other templates. See `extends`.
 
-### questions
+#### questions
 
-Optional. A dictionary of questions to ask when using the template. Object keys are used as replacement token names, and object values are used as description text in the prompt window. Many casing alternatives (such as `pascal` or `kebab`) are available for the replacement tokens.
+Optional. A dictionary of questions to ask when using the template. The answers are used as data when rendering the template. The aswers are referenced in templates by their key in the `questions` object.
+
+Question values can be one of three types:
+
+- `string`: The value is displayed as a label for the input box
+- `object` with properties:
+  - `displayName (string)`: Displayed as a label for the input box
+  - `defaultValue (string)`: A value that is used if no text is input
+- `array` of `object` (displayed as a selecttion menu). Properties:
+  - `displayName (string)`: Displayed as the name of the option
+  - `value (any value)`: The value to use when the value is selected
+
+Note that the `legacy` engine only supports strings even if the `value` for array questions can be anything.
 
 ```json
 {
   "questions": {
     "name": "File name",
     "myQuestion": "Some description",
-    "myOtherQuestion": "Some other description"
+    "myOtherQuestion": [
+      { "displayName": "A", "value": [1, 2] },
+      { "displayName": "B", "value": [3, 4] }
+    ]
   },
+  "folder": "{{name}}",
   "files": [
     {
-      "name": "{name.raw}.md",
+      "name": "{{name}}.md",
       "content": [
-        "{myQuestion.raw}", // Outputs the answer from the prompt
-        "{myOtherQuestion.kebab}" // Outputs the answer from the prompt
+        "{{myQuestion}}", // Outputs the answer from the prompt
+        "{{#each myOtherQuestion}}",
+        "{{this}}",
+        "{{/each}}"
       ]
     }
   ]
 }
 ```
 
-## Replacement tokens
-
-If your template defines `questions`, you can use the answers to those questions in the `folder`, `file.name` and `file.content` fields. The syntax for referencing an answer is `{<question-key>.<casing-alternative>}` (if you specified the question `name` and want the answer output as kebab-case, you'd write `{name.kebab}`.
-
-In the following example, a folder will be created using a kebab-case version of what was typed into the input box for the `componentName` question.
-
-```json
-{
-  "module-templates.templates": [
-    {
-      "displayName": "React component",
-      "folder": "{componentName.kebab}",
-      "questions": {
-        "componentName": "Component name"
-      }
-    }
-  ]
-}
-```
-
-### Casing alternatives
-
-- `{<question-key>.raw}`: Unmodified name from input box
-- `{<question-key>.pascal}`: PascalCased name
-- `{<question-key>.kebab}`: kebab-cased name
-- `{<question-key>.camel}`: camelCased name
-- `{<question-key>.snake}`: snake_cased name
-
 ## Composition / inheritance
 
-From version `1.1.0` it's possible to combine templates to create new ones. Templates can be given an `id`, which can be referenced from other templates using `extends` (see `extends` option above for more technical details). When referencing a template `id` in `extends`, you inherit all properties, questions and files from that template. You can inherit multiple templates. Inheritance is recursive, so you can inherit other templates that inherit something else and so on.
+Templates can be combined to create new ones. The `id` of a template can be referenced from other templates using `extends` (see `extends` option above for more technical details). When referencing a template `id` in `extends`, you inherit all properties, questions and files from that template. You can inherit multiple templates. Inheritance is recursive, so you can inherit other templates that inherit something else and so on.
 
 By omitting `displayName` from templates, you can create hidden templates that are only used to create other templates. In the example below, only "React component with SCSS" will be available when selecting templates.
 
@@ -174,6 +178,83 @@ By omitting `displayName` from templates, you can create hidden templates that a
     }
   ]
 }
+```
+
+## Legacy templates
+
+The legacy template engine does one thing: it replaces patterns like `{something.kebab}` with the answer to the corresponding question (`something` in this case). The patterns must also include a casing variant (`kebab` in this case), which controls the formatting of the output text. Casing alternatives:
+
+- `{<question-key>.raw}`: Unmodified text from input box
+- `{<question-key>.pascal}`: PascalCased text
+- `{<question-key>.kebab}`: kebab-cased text
+- `{<question-key>.camel}`: camelCased text
+- `{<question-key>.snake}`: snake_cased text
+
+In the following example, a folder will be created using a kebab-case version of what was typed into the input box for the `componentName` question.
+
+```json
+{
+  "module-templates.templates": [
+    {
+      "displayName": "React component",
+      "folder": "{componentName.kebab}",
+      "questions": {
+        "componentName": "Component name"
+      }
+    }
+  ]
+}
+```
+
+## Handlebars templates
+
+Enable Handlebars templates by setting `module-templates.engine` to `"handlebars"`. See the [Handlebars documentation](https://handlebarsjs.com/) for syntax. The answers object is passed directly to Handlebars as view data.
+
+### Helpers
+
+This plugin defines a few Handlebars helpers that you can use in templates. If you want more helpers, consider submitting a PR!
+
+#### eq
+
+Check whether thing A is equal to thing B. In the following example, `Yes!` will be output if the answer is `yes` and `No!` otherwise.
+
+```json
+[
+  "{{#eq answer \"yes\"}}Yes!{{else}}No!{{/eq}}",
+  "{{#if (eq answer \"yes\")}}Yes!{{else}}No!{{/if}}"
+]
+```
+
+#### camel
+
+Output text as `camelCase`
+
+```json
+"{{camel myAnswer}}"
+```
+
+#### kebab
+
+Output text as `kebab-case`
+
+```json
+"{{kebab myAnswer}}"
+```
+
+#### snake
+
+Output text as `snake_case`
+
+```json
+"{{snake myAnswer}}"
+```
+
+#### pascal
+
+Output text as `PascalCase`
+
+```json
+"{{pascal myAnswer}}
 ```
 
 ## Migrating to V1
