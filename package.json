@@ -72,12 +72,20 @@
       "title": "Module Templates",
       "properties": {
         "module-templates.engine": {
+          "scope": "resource",
           "type": "string",
           "enum": [
             "legacy",
             "handlebars"
           ],
           "default": "legacy"
+        },
+        "module-templates.templateFiles": {
+          "scope": "resource",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "module-templates.templates": {
           "scope": "resource",
@@ -115,14 +123,22 @@
                 "type": "object",
                 "additionalProperties": {
                   "anyOf": [
-                    { "type": "string" },
+                    {
+                      "type": "string"
+                    },
                     {
                       "type": "object",
                       "additionalProperties": false,
-                      "required": ["displayName"],
+                      "required": [
+                        "displayName"
+                      ],
                       "properties": {
-                        "defaultValue": { "type": "string" },
-                        "displayName": { "type": "string" }
+                        "defaultValue": {
+                          "type": "string"
+                        },
+                        "displayName": {
+                          "type": "string"
+                        }
                       }
                     },
                     {
@@ -130,11 +146,21 @@
                       "items": {
                         "type": "object",
                         "additionalProperties": false,
-                        "required": ["displayName"],
+                        "required": [
+                          "displayName"
+                        ],
                         "properties": {
-                          "displayName": { "type": "string" },
+                          "displayName": {
+                            "type": "string"
+                          },
                           "value": {
-                            "type": ["array", "boolean", "number", "object", "string"]
+                            "type": [
+                              "array",
+                              "boolean",
+                              "number",
+                              "object",
+                              "string"
+                            ]
                           }
                         }
                       }
