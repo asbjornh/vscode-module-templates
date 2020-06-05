@@ -17,6 +17,8 @@ async function newFromTemplate(uri: Uri | undefined) {
   const engine = getEngine(root);
   const answers = await ask(template.questions);
 
+  if (!answers) return;
+
   template.files.forEach(({ name, content }) => {
     const folderName = maybeRender(engine, template.folder, answers);
     const folderPath = getFolderPath(

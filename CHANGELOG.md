@@ -3,6 +3,7 @@
 ## 1.2.1
 
 - Fixes files always being output to the first workspace folder in multi-folder workspaces when running from the command palette.
+- Fixes files being output with missing data when the ESC key is pressed.
 
 ## 1.2.0
 
