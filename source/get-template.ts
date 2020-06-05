@@ -1,17 +1,17 @@
-import { Uri, window } from "vscode";
+import { window, WorkspaceFolder } from "vscode";
 
 import { getConfig } from "./utils";
 import { Template } from "./config";
-import { readJson, showErrorAndThrow } from "./utils";
+import { pick, readJson, showErrorAndThrow } from "./utils";
 
-export default async function getTemplate(uri: Uri | undefined) {
-  const config = getConfig(uri);
+export default async function getTemplate(root: WorkspaceFolder) {
+  const config = getConfig(root);
   const templatesFromConfig = config.templates || [];
   const templateFiles = config.templateFiles || [];
 
   const templatesFromFiles: Template[] = templateFiles
     .map(filePath => {
-      const json = readJson(uri, filePath);
+      const json = readJson(root, filePath);
       return Array.isArray(json)
         ? json
         : showErrorAndThrow(`Content in '${filePath}' is not an array`);
@@ -30,16 +30,13 @@ export default async function getTemplate(uri: Uri | undefined) {
     const [firstTemplate] = templates;
     return resolveInheritance(firstTemplate, templates);
   } else {
-    const result = await window.showQuickPick(
+    const template = await pick(
+      "Select a template",
       templates
         .filter(({ displayName }) => displayName)
-        .map(template => ({
-          label: template.displayName!,
-          value: template,
-        })),
-      { placeHolder: "Select a template" },
+        .map(template => ({ label: template.displayName!, value: template })),
     );
-    return result ? resolveInheritance(result.value, templates) : undefined;
+    return template ? resolveInheritance(template, templates) : undefined;
   }
 }
 

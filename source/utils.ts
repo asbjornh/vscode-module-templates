@@ -1,4 +1,4 @@
-import { Uri, window, workspace } from "vscode";
+import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import * as path from "path";
 import * as fse from "fs-extra";
 import untildify from "untildify";
@@ -14,37 +14,62 @@ export function showModal(message: string) {
   window.showInformationMessage(message, { modal: true });
 }
 
-function getWorkspaceRoot(uri: Uri | undefined) {
-  const currentUri = uri || window.activeTextEditor?.document.uri;
-  return currentUri && workspace.getWorkspaceFolder(currentUri);
+export async function pick<T>(
+  placeHolder,
+  alternatives: { label: string; value: T }[],
+) {
+  const result = await window.showQuickPick(alternatives, { placeHolder });
+  return result?.value;
 }
 
-function resolveFilePath(uri: Uri | undefined, filePath: string) {
+// Returns the root folder that matches `uri`, if any. If no `uri` is provided, the uri of the currently open text file is used. If no file is open, one of the available workspace folders is returned (if any).
+export async function getCurrentRoot(uri: Uri | undefined) {
+  const currentUri = uri || window.activeTextEditor?.document.uri;
+  const workspaceFolder = currentUri
+    ? workspace.getWorkspaceFolder(currentUri)
+    : undefined;
+
+  if (workspaceFolder) return workspaceFolder;
+
+  const roots = workspace.workspaceFolders || [];
+
+  const selectedRoot =
+    roots.length === 1
+      ? roots[0]
+      : roots.length > 1
+      ? await pick(
+          "You have more than one workspace folder. Which one do you want to use?",
+          roots.map(folder => ({ label: folder.name, value: folder })),
+        )
+      : undefined;
+
+  if (selectedRoot) return selectedRoot;
+
+  showErrorAndThrow(`Couldn't determine which folder to use.`);
+}
+
+function resolveFilePath(root: WorkspaceFolder, filePath: string) {
   if (path.isAbsolute(filePath)) return filePath;
   if (filePath.startsWith("~")) return untildify(filePath);
-  const root = getWorkspaceRoot(uri);
   return root
     ? path.resolve(root.uri.fsPath, "./.vscode", filePath)
     : showErrorAndThrow(`Couldn't resolve path for file '${filePath}'`);
 }
 
 // Reads a json file from an absolute path or a path relative to the `.vscode/settings.json` file for the current workspace
-export function readJson(uri: Uri | undefined, filePath: string) {
-  const resolvedPath = resolveFilePath(uri, filePath);
+export function readJson(root: WorkspaceFolder, filePath: string) {
+  const resolvedPath = resolveFilePath(root, filePath);
   return fse.pathExistsSync(resolvedPath)
     ? fse.readJsonSync(resolvedPath)
     : showErrorAndThrow(`File not found: '${resolvedPath}'`);
 }
 
-export function getConfig(uri: Uri | undefined) {
-  return workspace.getConfiguration(
-    "module-templates",
-    getWorkspaceRoot(uri),
-  ) as Config;
+export function getConfig(root: WorkspaceFolder) {
+  return workspace.getConfiguration("module-templates", root) as Config;
 }
 
-export function getEngine(uri: Uri | undefined): Engine {
-  const engine = getConfig(uri).engine || "legacy";
+export function getEngine(root: WorkspaceFolder): Engine {
+  const engine = getConfig(root).engine || "legacy";
 
   if (!engines.includes(engine)) {
     showErrorAndThrow(`Unknown template engine '${engine}'`);
@@ -55,22 +80,13 @@ export function getEngine(uri: Uri | undefined): Engine {
 
 export function getFolderPath(
   uri: Uri | undefined,
+  root: WorkspaceFolder,
   folderName: string | undefined,
   defaultPath: string | undefined,
 ) {
-  const workspaceRoot = workspace.workspaceFolders?.[0].uri.fsPath;
-
-  if (!workspaceRoot && !uri) {
-    showErrorAndThrow(
-      "When running 'New From Template' from the command palette, you must be in a workspace",
-    );
-  }
-
-  const root = uri?.fsPath
-    ? uri.fsPath
-    : defaultPath
-    ? `${workspaceRoot}/${defaultPath}`
-    : workspaceRoot;
-
-  return folderName ? `${root}/${folderName}` : root;
+  if (uri) return folderName ? path.join(uri.fsPath, folderName) : uri.fsPath;
+  const rootToUse = defaultPath
+    ? path.join(root.uri.fsPath, defaultPath)
+    : root.uri.fsPath;
+  return folderName ? path.join(rootToUse, folderName) : rootToUse;
 }

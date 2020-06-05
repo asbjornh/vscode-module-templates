@@ -2,23 +2,13 @@ import { window } from "vscode";
 
 import { Dictionary } from "./render";
 import { Question, QuestionAlternative, Questions } from "./config";
+import { pick } from "./utils";
 
 // NOTE: The empty type expresses `any`, excluding `null` and `undefined`
 export type Answer = {};
 export type Answers = Dictionary<Answer>;
 
 const prompt = (question: string) => window.showInputBox({ prompt: question });
-
-const pick = async (alternatives: QuestionAlternative[]) =>
-  window
-    .showQuickPick(
-      alternatives.map(({ displayName, value }) => ({
-        label: displayName,
-        value,
-      })),
-      { placeHolder: "Pick one!" },
-    )
-    .then(answer => answer?.value);
 
 async function promptAnswers(
   questions: [string, Question][],
@@ -29,7 +19,10 @@ async function promptAnswers(
     typeof question === "string"
       ? await prompt(question)
       : Array.isArray(question)
-      ? await pick(question)
+      ? await pick(
+          "Pick one!",
+          question.map(({ displayName: label, value }) => ({ label, value })),
+        )
       : (await prompt(question.displayName)) || question.defaultValue;
   return rest.length > 0
     ? [[key, answer], ...(await promptAnswers(rest))]

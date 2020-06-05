@@ -8,7 +8,11 @@ A flexible VSCode extension for creating (and using) file/folder templates. If y
 
 ## Use
 
-Use the plugin either by right clicking in the file explorer and selecting `New From Template` or by running `New From Template` using the command palette.
+The plugin is used in one of two ways:
+
+- Right click in the file explorer and select `New From Template`. The template files will be output here.
+
+- Run `New From Template` using the command palette. Files will be output relative to the current workspace folder (and the `defaultPath` option if set)
 
 ## Templates
 
@@ -90,7 +94,7 @@ Optional. If this is option is set, a folder is created using the name from the 
 
 Required. A list of file templates. File templates are objects with the following properties:
 
-- `name`: Required. A name for the file to create (with file extension). This field is a template; you can use any syntax supported by the template engine.
+- `name`: Required. A name for the file to create (with file extension). Can also be a path (non-existing folders will be created). This field is a template; you can use any syntax supported by the template engine.
 - `content`: Required. The template for the file to create, given as an array of strings.
 
 #### id

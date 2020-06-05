@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Fixes files always being output to the first workspace folder in multi-folder workspaces when running from the command palette.
+
 ## 1.2.0
 
 - Adds support for `handlebars` templates
