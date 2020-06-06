@@ -8,7 +8,13 @@ import { pick } from "./utils";
 export type Answer = {};
 export type Answers = Dictionary<Answer>;
 
-const prompt = (question: string) => window.showInputBox({ prompt: question });
+const prompt = async (question: string, defaultValue?: string) => {
+  const answer = await window.showInputBox({
+    prompt: question,
+    placeHolder: defaultValue,
+  });
+  return answer || defaultValue;
+};
 
 async function promptAnswers(
   questions: [string, Question][],
@@ -23,7 +29,7 @@ async function promptAnswers(
           "Pick one!",
           question.map(({ displayName: label, value }) => ({ label, value })),
         )
-      : (await prompt(question.displayName)) || question.defaultValue;
+      : await prompt(question.displayName, question.defaultValue);
   return rest.length > 0
     ? [[key, answer], ...(await promptAnswers(rest))]
     : [[key, answer]];

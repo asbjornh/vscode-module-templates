@@ -2,7 +2,8 @@
 
 ## 1.3.0
 
-- Adds `open` option to files for automatically opening files after creation.
+- Adds `open` option to files for automatically opening them after creation.
+- Adds question `defaultValue` as input placeholder
 
 ## 1.2.1
 
