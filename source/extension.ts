@@ -1,5 +1,5 @@
 "use strict";
-import { commands, ExtensionContext, Uri } from "vscode";
+import { commands, ExtensionContext, Uri, workspace, window } from "vscode";
 import * as path from "path";
 import * as fse from "fs-extra";
 
@@ -19,20 +19,21 @@ async function newFromTemplate(uri: Uri | undefined) {
 
   if (!answers) return;
 
-  template.files.forEach(({ name, content }) => {
+  template.files.forEach(async ({ name, open, content }) => {
     const folderName = maybeRender(engine, template.folder, answers);
-    const folderPath = getFolderPath(
-      uri,
-      root,
-      folderName,
-      template.defaultPath,
-    );
+    const { defaultPath } = template;
+    const folderPath = getFolderPath(uri, root, folderName, defaultPath);
     const fileName = render(engine, name, answers);
+    const filePath = path.join(folderPath, fileName);
+    const fileContent = render(engine, content.join("\n"), answers);
 
-    fse.outputFileSync(
-      path.join(folderPath, fileName),
-      render(engine, content.join("\n"), answers),
-    );
+    await fse.outputFile(filePath, fileContent);
+
+    if (open) {
+      workspace
+        .openTextDocument(Uri.file(filePath))
+        .then(window.showTextDocument);
+    }
   });
 }
 

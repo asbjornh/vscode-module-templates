@@ -95,6 +95,7 @@ Optional. If this is option is set, a folder is created using the name from the 
 Required. A list of file templates. File templates are objects with the following properties:
 
 - `name`: Required. A name for the file to create (with file extension). Can also be a path (non-existing folders will be created). This field is a template; you can use any syntax supported by the template engine.
+- `open`: Optional. A `boolean` that indicates whether this file should be opened after creation or not.
 - `content`: Required. The template for the file to create, given as an array of strings.
 
 #### id

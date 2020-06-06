@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+- Adds `open` option to files for automatically opening files after creation.
+
 ## 1.2.1
 
 - Fixes files always being output to the first workspace folder in multi-folder workspaces when running from the command palette.
