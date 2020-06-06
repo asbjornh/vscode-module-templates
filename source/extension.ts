@@ -6,6 +6,7 @@ import * as fse from "fs-extra";
 import { getCurrentRoot, getEngine, getFolderPath } from "./utils";
 import { maybeRender, render } from "./render";
 import ask from "./ask-questions";
+import getGlobals from "./get-globals";
 import getTemplate from "./get-template";
 
 async function newFromTemplate(uri: Uri | undefined) {
@@ -15,7 +16,7 @@ async function newFromTemplate(uri: Uri | undefined) {
   if (!template) return;
 
   const engine = getEngine(root);
-  const answers = await ask(template.questions);
+  const answers = {...getGlobals(root), ...await ask(template.questions)};
 
   if (!answers) return;
 

@@ -37,8 +37,11 @@ export const engines = Object.values(enginesDict);
 
 export type Engine = keyof typeof enginesDict;
 
+export type Globals = { [key: string]: any };
+
 export type Config = {
   engine?: Engine;
+  globals?: string | Globals,
   templates?: Template[];
   templateFiles?: string[];
 };
