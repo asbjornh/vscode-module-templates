@@ -66,9 +66,17 @@ Use this to select what templating engine to use. For backward compatibility rea
 
 Optional. `string[]`
 
-A list of file paths to load templates from. The files must be `json` files and the contents must match the schema of the `module-templates.templates` option.
+A list of paths to files load templates from. The files must be `json` files and the contents must match the schema of the `module-templates.templates` option.
 
 Paths can either be absolute, relative to the home directory (`~`) or relative to `.vscode/settings.json`. Relative paths will not work in user settings.
+
+Example:
+
+```json
+{
+  "module-templates.templateFiles": ["./templates.json"]
+}
+```
 
 ### module-templates.templates
 
