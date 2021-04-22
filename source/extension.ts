@@ -32,7 +32,7 @@ async function newFromTemplate(uri: Uri | undefined) {
     if (open) {
       workspace
         .openTextDocument(Uri.file(filePath))
-        .then(window.showTextDocument);
+        .then(doc => window.showTextDocument(doc, { preview: false }));
     }
   });
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Fixes bug to make sure `open` actually opens all the files.
+
 ## 1.3.0
 
 - Adds `open` option to files for automatically opening them after creation.
