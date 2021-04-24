@@ -2,7 +2,7 @@
 
 ## 1.3.1
 
-- Fixes bug to make sure `open` actually opens all the files.
+- Overrides the "Enable Preview" user setting to always open files as non-preview
 
 ## 1.3.0
 
