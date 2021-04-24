@@ -17,16 +17,18 @@ export type QuestionAlternative = {
 export type Question = string | QuestionObj | QuestionAlternative[];
 export type Questions = { [key: string]: Question };
 
-export type Template = {
+export interface TemplateWithoutId {
   displayName?: string;
   defaultPath?: string;
   extends?: string[];
   files: FileTemplate[];
   folder?: string;
-  hidden?: boolean;
-  id?: string;
   questions?: Questions;
-};
+}
+
+export interface Template extends TemplateWithoutId {
+  id?: string;
+}
 
 const enginesDict = {
   legacy: "legacy",
@@ -37,8 +39,12 @@ export const engines = Object.values(enginesDict);
 
 export type Engine = keyof typeof enginesDict;
 
+export type TemplatesObj = {
+  [id: string]: TemplateWithoutId;
+};
+
 export type Config = {
   engine?: Engine;
-  templates?: Template[];
+  templates?: Template[] | TemplatesObj;
   templateFiles?: string[];
 };

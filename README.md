@@ -23,8 +23,8 @@ Below is a config example, showing how a template for a React component can be d
 ```json
 {
   "module-templates.engine": "handlebars",
-  "module-templates.templates": [
-    {
+  "module-templates.templates": {
+    "react-component": {
       "displayName": "React component",
       "defaultPath": "source/components",
       "folder": "{{kebab name}}",
@@ -50,7 +50,7 @@ Below is a config example, showing how a template for a React component can be d
         }
       ]
     }
-  ]
+  }
 }
 ```
 
@@ -80,7 +80,7 @@ Example:
 
 ### module-templates.templates
 
-An array of template objects. Templates have the following properties:
+An object whose keys are id strings (which can be used in other templates, see `extends`) and values are template objects. Templates have the following properties:
 
 #### displayName
 
@@ -105,10 +105,6 @@ Required. A list of file templates. File templates are objects with the followin
 - `name`: Required. A name for the file to create (with file extension). Can also be a path (non-existing folders will be created). This field is a template; you can use any syntax supported by the template engine.
 - `open`: Optional. A `boolean` that indicates whether this file should be opened after creation or not.
 - `content`: Required. The template for the file to create, given as an array of strings.
-
-#### id
-
-Optional (string). Setting an `id` for a template lets you use that template in other templates. See `extends`.
 
 #### questions
 
@@ -153,15 +149,14 @@ Note that the `legacy` engine only supports strings even if the `value` for arra
 
 ## Composition / inheritance
 
-Templates can be combined to create new ones. The `id` of a template can be referenced from other templates using `extends` (see `extends` option above for more technical details). When referencing a template `id` in `extends`, you inherit all properties, questions and files from that template. You can inherit multiple templates. Inheritance is recursive, so you can inherit other templates that inherit something else and so on.
+Templates can be combined to create new ones. The id of a template can be referenced from other templates using `extends` (see `extends` option above for more technical details). When referencing a template ids in `extends`, you inherit all properties, questions and files from that template. You can inherit multiple templates. Inheritance is recursive, so you can inherit other templates that inherit something else and so on.
 
 By omitting `displayName` from templates, you can create hidden templates that are only used to create other templates. In the example below, only "React component with SCSS" will be available when selecting templates.
 
 ```json
 {
-  "module-templates.templates": [
-    {
-      "id": "jsx-file",
+  "module-templates.templates": {
+    "jsx-file": {
       "files": [
         {
           "name": "{name.kebab}.jsx",
@@ -172,8 +167,7 @@ By omitting `displayName` from templates, you can create hidden templates that a
         }
       ]
     },
-    {
-      "id": "scss-file",
+    "scss-file": {
       "files": [
         {
           "name": "{name.kebab}.scss",
@@ -181,7 +175,7 @@ By omitting `displayName` from templates, you can create hidden templates that a
         }
       ]
     },
-    {
+    "react-component": {
       "extends": ["jsx-file", "scss-file"],
       "defaultPath": "source/components",
       "displayName": "React component with SCSS",
@@ -189,7 +183,7 @@ By omitting `displayName` from templates, you can create hidden templates that a
       "questions": { "name": "Component name" },
       "files": []
     }
-  ]
+  }
 }
 ```
 
@@ -207,15 +201,15 @@ In the following example, a folder will be created using a kebab-case version of
 
 ```json
 {
-  "module-templates.templates": [
-    {
+  "module-templates.templates": {
+    "react-component": {
       "displayName": "React component",
       "folder": "{componentName.kebab}",
       "questions": {
         "componentName": "Component name"
       }
     }
-  ]
+  }
 }
 ```
 
