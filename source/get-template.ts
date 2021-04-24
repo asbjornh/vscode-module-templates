@@ -1,20 +1,37 @@
 import { window, WorkspaceFolder } from "vscode";
 
 import { getConfig } from "./utils";
-import { Template } from "./config";
+import { Template, TemplatesObj } from "./config";
 import { pick, readJson, showErrorAndThrow } from "./utils";
+
+function getTemplates(setting?: Template[] | TemplatesObj): Template[] {
+  if (Array.isArray(setting)) {
+    return setting;
+  } else if (setting && typeof setting === "object") {
+    return Object.entries(setting || {}).map(([key, value]) => {
+      return { ...value, id: key };
+    });
+  }
+
+  return [];
+}
 
 export default async function getTemplate(root: WorkspaceFolder) {
   const config = getConfig(root);
-  const templatesFromConfig = config.templates || [];
   const templateFiles = config.templateFiles || [];
+  const templatesFromConfig = getTemplates(config.templates);
 
   const templatesFromFiles: Template[] = templateFiles
     .map(filePath => {
-      const json = readJson(root, filePath);
-      return Array.isArray(json)
-        ? json
-        : showErrorAndThrow(`Content in '${filePath}' is not an array`);
+      const templates = getTemplates(readJson(root, filePath));
+
+      if (!templates.length) {
+        showErrorAndThrow(
+          `Templates in '${filePath}' are empty or unable to be recognized`,
+        );
+      }
+
+      return templates;
     })
     .flat();
 

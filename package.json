@@ -91,119 +91,236 @@
         },
         "module-templates.templates": {
           "scope": "resource",
-          "type": "array",
-          "default": [],
+          "default": {},
           "description": "A list of templates. See readme for how to create a template.",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "files"
-            ],
-            "properties": {
-              "displayName": {
-                "type": "string",
-                "description": "The name of the template shown in the template selection list"
-              },
-              "defaultPath": {
-                "type": "string",
-                "description": "Where to put module when the path is unknown, such as when running from the command palette"
-              },
-              "extends": {
-                "type": "array",
-                "description": "A list of template IDs to inherit properties from",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "folder": {
-                "type": "string",
-                "description": "Optional folder name. If empty, no folder is created. You can use template syntax here."
-              },
-              "id": {
-                "type": "string"
-              },
-              "questions": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": {
                 "type": "object",
-                "description": "Used to show input boxes in order to supply data to the template",
-                "additionalProperties": {
-                  "anyOf": [
-                    {
+                "additionalProperties": false,
+                "required": [
+                  "files"
+                ],
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "description": "The name of the template shown in the template selection list"
+                  },
+                  "defaultPath": {
+                    "type": "string",
+                    "description": "Where to put module when the path is unknown, such as when running from the command palette"
+                  },
+                  "extends": {
+                    "type": "array",
+                    "description": "A list of template IDs to inherit properties from",
+                    "items": {
                       "type": "string"
-                    },
-                    {
+                    }
+                  },
+                  "folder": {
+                    "type": "string",
+                    "description": "Optional folder name. If empty, no folder is created. You can use template syntax here."
+                  },
+                  "questions": {
+                    "type": "object",
+                    "description": "Used to show input boxes in order to supply data to the template",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "displayName"
+                          ],
+                          "properties": {
+                            "defaultValue": {
+                              "type": "string"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "displayName"
+                            ],
+                            "properties": {
+                              "displayName": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": [
+                                  "array",
+                                  "boolean",
+                                  "number",
+                                  "object",
+                                  "string"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "files": {
+                    "type": "array",
+                    "description": "The files you want to be written for this template",
+                    "items": {
                       "type": "object",
                       "additionalProperties": false,
                       "required": [
-                        "displayName"
+                        "name",
+                        "content"
                       ],
                       "properties": {
-                        "defaultValue": {
-                          "type": "string"
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the file (with extension). You can use template syntax here."
                         },
-                        "displayName": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                          "displayName"
-                        ],
-                        "properties": {
-                          "displayName": {
+                        "open": {
+                          "type": "boolean",
+                          "description": "Whether to open this file automatically or not after creation"
+                        },
+                        "content": {
+                          "type": "array",
+                          "description": "The content of the file as a list of strings",
+                          "items": {
                             "type": "string"
-                          },
-                          "value": {
-                            "type": [
-                              "array",
-                              "boolean",
-                              "number",
-                              "object",
-                              "string"
-                            ]
                           }
                         }
                       }
                     }
-                  ]
+                  }
                 }
-              },
-              "files": {
-                "type": "array",
-                "description": "The files you want to be written for this template",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "name",
-                    "content"
-                  ],
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "The name of the file (with extension). You can use template syntax here."
-                    },
-                    "open": {
-                      "type": "boolean",
-                      "description": "Whether to open this file automatically or not after creation"
-                    },
-                    "content": {
-                      "type": "array",
-                      "description": "The content of the file as a list of strings",
-                      "items": {
-                        "type": "string"
+              }
+            },
+            {
+              "deprecationMessage": "Using an array for templates is deprecated and support will be removed in a future version. Use an object instead (see the documentation).",
+              "type": "array",
+              "description": "A list of templates. See readme for how to create a template.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "files"
+                ],
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "description": "The name of the template shown in the template selection list"
+                  },
+                  "defaultPath": {
+                    "type": "string",
+                    "description": "Where to put module when the path is unknown, such as when running from the command palette"
+                  },
+                  "extends": {
+                    "type": "array",
+                    "description": "A list of template IDs to inherit properties from",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folder": {
+                    "type": "string",
+                    "description": "Optional folder name. If empty, no folder is created. You can use template syntax here."
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "questions": {
+                    "type": "object",
+                    "description": "Used to show input boxes in order to supply data to the template",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "displayName"
+                          ],
+                          "properties": {
+                            "defaultValue": {
+                              "type": "string"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "displayName"
+                            ],
+                            "properties": {
+                              "displayName": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": [
+                                  "array",
+                                  "boolean",
+                                  "number",
+                                  "object",
+                                  "string"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "files": {
+                    "type": "array",
+                    "description": "The files you want to be written for this template",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "name",
+                        "content"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the file (with extension). You can use template syntax here."
+                        },
+                        "open": {
+                          "type": "boolean",
+                          "description": "Whether to open this file automatically or not after creation"
+                        },
+                        "content": {
+                          "type": "array",
+                          "description": "The content of the file as a list of strings",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
                       }
                     }
                   }
                 }
               }
             }
-          }
+          ]
         }
       }
     }
