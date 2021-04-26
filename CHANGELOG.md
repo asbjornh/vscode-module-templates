@@ -1,7 +1,8 @@
 # Changelog
 
-## 1.3.1
+## 1.4.0
 
+- Adds merging of templates from user- and workspace settings by allowing for using an object for `module-templates.templates`. Using an array for this config option is now deprecated and will stop working in the next major version.
 - Overrides the "Enable Preview" user setting to always open files as non-preview
 
 ## 1.3.0
