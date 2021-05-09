@@ -66,7 +66,7 @@ Use this to select what templating engine to use. For backward compatibility rea
 
 Optional. `string[]`
 
-A list of paths to files load templates from. The files must be `json` files and the contents must match the schema of the `module-templates.templates` option.
+A list of file paths to load templates from. The files should be named like `<some-name>.module-templates.json` (f ex `my-project.module-templates.json`). The `.module-templates` part of the file name is optional but _strongly_ recommended, because you get schema validation in VSCode when editing those files.
 
 Paths can either be absolute, relative to the home directory (`~`) or relative to `.vscode/settings.json`. Relative paths will not work in user settings.
 
@@ -74,7 +74,7 @@ Example:
 
 ```json
 {
-  "module-templates.templateFiles": ["./templates.json"]
+  "module-templates.templateFiles": ["./my-templates.module-templates.json"]
 }
 ```
 
@@ -263,33 +263,3 @@ Output text as `PascalCase`
 ```json
 "{{pascal myAnswer}}
 ```
-
-## Migrating to V1
-
-Versions of this plugin prior to `1.0.0` would always ask for a module name, and would therefore always support the `{name}` replacement token. In `1.0.0` the prompt for `{name}` was removed. This means that most templates created for older versions will not work anymore.
-
-### How to make templates work again
-
-To make broken templates work after upgrading to `1.0.0` add a `name` question to your templates, like so:
-
-```json
-{
-  "module-templates.templates": [
-    {
-      "displayName": "React component",
-      "folder": "{name.raw}",
-      "questions": {
-        "name": "Component name" // <- Add this
-      },
-      "files": [
-        {
-          "name": "{name.raw}.jsx",
-          "content": []
-        }
-      ]
-    }
-  ]
-}
-```
-
-If you're experiencing issues after adding a `name` question, please submit an issue.

@@ -3,7 +3,7 @@
   "displayName": "Module Templates",
   "publisher": "asbjornh",
   "icon": "icon.png",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
     "vscode:prepublish": "webpack",
@@ -23,7 +23,8 @@
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.4",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-event-plugin": "^1.1.1"
   },
   "repository": {
     "type": "git",
@@ -67,6 +68,12 @@
         }
       ]
     },
+    "jsonValidation": [
+      {
+        "fileMatch": "*.module-templates.json",
+        "url": "./dist/templates.schema.json"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "Module Templates",
@@ -92,7 +99,7 @@
         "module-templates.templates": {
           "scope": "resource",
           "default": {},
-          "description": "A list of templates. See readme for how to create a template.",
+          "description": "A dictionary of templates. See readme for how to create a template.",
           "oneOf": [
             {
               "deprecationMessage": "Using an array for templates is deprecated and support will be removed in a future version. Use an object instead (see the documentation).",
