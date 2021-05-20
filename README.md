@@ -232,34 +232,25 @@ Check whether thing A is equal to thing B. In the following example, `Yes!` will
 ]
 ```
 
-#### camel
+#### Casing helpers
 
-Output text as `camelCase`
-
-```json
-"{{camel myAnswer}}"
-```
-
-#### kebab
-
-Output text as `kebab-case`
+Casing helpers are used to transform answers into a specific casing convention. F. ex. to convert the answer `"some name"` into `"SomeName"` (PascalCase):
 
 ```json
-"{{kebab myAnswer}}"
+["{{pascal answer}}"]
 ```
 
-#### snake
+| Name         | Input       | Output      |
+| ------------ | ----------- | ----------- |
+| **camel**    | `some text` | `someText`  |
+| **capital**  | `some_text` | `Some Text` |
+| **constant** | `some text` | `SOME_TEXT` |
+| **lower**    | `SOME_TEXT` | `some_text` |
+| **kebab**    | `some text` | `some-text` |
+| **pascal**   | `some text` | `SomeText`  |
+| **sentence** | `some_text` | `Some text` |
+| **snake**    | `some text` | `some_text` |
+| **upper**    | `some-text` | `SOME-TEXT` |
+| **words**    | `some_text` | `some text` |
 
-Output text as `snake_case`
-
-```json
-"{{snake myAnswer}}"
-```
-
-#### pascal
-
-Output text as `PascalCase`
-
-```json
-"{{pascal myAnswer}}
-```
+Note that handlebars helpers can be combined, which you can use to create some unsupported casing conventions. F. ex. to ouput text in `COBOL-CASE` you can use `{{upper (kebab input)}}`, or to get `UPPERCASE WORDS` use `{{upper (words input)}}`.

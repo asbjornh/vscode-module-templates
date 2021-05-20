@@ -1,4 +1,13 @@
-import { pascalCase, paramCase, camelCase, snakeCase } from "change-case";
+import {
+  pascalCase,
+  paramCase,
+  camelCase,
+  snakeCase,
+  constantCase,
+  noCase,
+  sentenceCase,
+  capitalCase,
+} from "change-case";
 import { compile } from "handlebars";
 
 import { Answers } from "../ask-questions";
@@ -11,17 +20,24 @@ const value = (value, thisObj, options) =>
       : options.inverse(thisObj)
     : value;
 
-const stringTransform = transform => maybeString =>
-  typeof maybeString === "string" ? transform(maybeString) : maybeString;
+const stringTransform =
+  (transform: (str: string) => string) => (maybeString: string | undefined) =>
+    typeof maybeString === "string" ? transform(maybeString) : maybeString;
 
 const helpers = {
+  camel: stringTransform(camelCase),
+  capital: stringTransform(capitalCase),
+  constant: stringTransform(constantCase),
   eq: function (a, b, options) {
     return value(a === b, this, options);
   },
-  pascal: stringTransform(pascalCase),
+  lower: stringTransform((str: string) => str.toLowerCase()),
   kebab: stringTransform(paramCase),
-  camel: stringTransform(camelCase),
+  pascal: stringTransform(pascalCase),
+  sentence: stringTransform(sentenceCase),
   snake: stringTransform(snakeCase),
+  upper: stringTransform((str: string) => str.toUpperCase()),
+  words: stringTransform(noCase),
 };
 
 export default function render(templateText: string, answers: Answers) {
