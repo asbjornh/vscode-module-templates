@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.0
+
+- Adds new casing options for handlebars templates
+- Fixes silent crash when `questions` is an empty object
+- Fixes [#12](https://github.com/asbjornh/vscode-module-templates/issues/12): Makes `files` property on templates optional.
+- Fixes [#21](https://github.com/asbjornh/vscode-module-templates/issues/21): Moves command lower in the file explorer context menu (should now be visible below "New Folder")
+
 ## 1.5.0
 
 - Adds JSON schema validation for template files ending in `.module-templates.json`.
