@@ -19,6 +19,7 @@ const prompt = async (question: string, defaultValue?: string) => {
 async function promptAnswers(
   questions: [string, Question][],
 ): Promise<[string, Answer | undefined][]> {
+  if (questions.length === 0) return [];
   const [first, ...rest] = questions;
   const [key, question] = first;
   const answer =
