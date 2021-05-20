@@ -64,7 +64,7 @@
       "explorer/context": [
         {
           "command": "extension.newModuleFromTemplate",
-          "group": "navigation"
+          "group": "navigation@10"
         }
       ]
     },
