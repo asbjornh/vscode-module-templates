@@ -75,7 +75,7 @@ function resolveInheritance(template: Template, templates: Template[]) {
       ...accum,
       ...data,
       extends: [],
-      files: [...accum.files, ...data.files],
+      files: [...(accum.files || []), ...(data.files || [])],
       id: template.id,
       questions: { ...accum.questions, ...data.questions },
     }),

@@ -19,7 +19,7 @@ async function newFromTemplate(uri: Uri | undefined) {
 
   if (!answers) return;
 
-  template.files.forEach(async ({ name, open, content }) => {
+  template.files?.forEach(async ({ name, open, content }) => {
     const folderName = maybeRender(engine, template.folder, answers);
     const { defaultPath } = template;
     const folderPath = getFolderPath(uri, root, folderName, defaultPath);

@@ -115,9 +115,6 @@
               "additionalProperties": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": [
-                  "files"
-                ],
                 "properties": {
                   "displayName": {
                     "type": "string",

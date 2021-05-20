@@ -21,7 +21,7 @@ export interface TemplateWithoutId {
   displayName?: string;
   defaultPath?: string;
   extends?: string[];
-  files: FileTemplate[];
+  files?: FileTemplate[];
   folder?: string;
   questions?: Questions;
 }
