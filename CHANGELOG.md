@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0
+
+- Adds support for configuration of Handlebars (`module-templates.handlebarsConfig`)
+- Adds error messages for some cases of silent failure
+
 ## 1.6.0
 
 - Adds new casing options for handlebars templates
