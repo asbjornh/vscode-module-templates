@@ -22,8 +22,6 @@ async function newFromTemplate(uri: Uri | undefined) {
   const engine = getEngine(root);
   const answers = await ask(template.questions);
 
-  if (!answers) return;
-
   const hbsConfig = engine === "handlebars" ? getHbsConfig(root) : {};
 
   template.files?.forEach(async ({ name, open, content }) => {
@@ -50,7 +48,10 @@ export function activate(context: ExtensionContext) {
   const command = commands.registerCommand(
     commandId,
     (uri: Uri | undefined) => {
-      newFromTemplate(uri);
+      newFromTemplate(uri).catch(error => {
+        console.error(error);
+        window.showErrorMessage(error.message);
+      });
     },
   );
 

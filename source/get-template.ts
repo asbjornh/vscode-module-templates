@@ -2,7 +2,7 @@ import { window, WorkspaceFolder } from "vscode";
 
 import { getConfig } from "./utils";
 import { Template, TemplatesObj } from "./config";
-import { pick, readJson, showErrorAndThrow } from "./utils";
+import { pick, readJson } from "./utils";
 
 function getTemplates(setting?: Template[] | TemplatesObj): Template[] {
   if (Array.isArray(setting)) {
@@ -26,7 +26,7 @@ export default async function getTemplate(root: WorkspaceFolder) {
       const templates = getTemplates(readJson(root, filePath));
 
       if (!templates.length) {
-        showErrorAndThrow(
+        throw new Error(
           `Templates in '${filePath}' are empty or unable to be recognized`,
         );
       }
@@ -38,7 +38,7 @@ export default async function getTemplate(root: WorkspaceFolder) {
   const templates = [...templatesFromFiles, ...templatesFromConfig];
 
   if (templates.length === 0) {
-    showErrorAndThrow(
+    throw new Error(
       "No templates found. Add some to your user, workspace or folder settings!",
     );
   }

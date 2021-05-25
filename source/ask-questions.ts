@@ -38,12 +38,13 @@ async function promptAnswers(
 
 export default async function ask(
   questions: Questions | undefined,
-): Promise<Answers | undefined> {
+): Promise<Answers> {
   if (!questions) return {};
   const answers = await promptAnswers(Object.entries(questions));
 
   // NOTE: `undefined` means the user cancelled (https://code.visualstudio.com/api/references/vscode-api#window.showInputBox)
-  if (answers.some(([, value]) => typeof value === "undefined")) return;
+  if (answers.some(([, value]) => typeof value === "undefined"))
+    throw new Error("Aborting because question wasn't answered");
 
   return answers
     .filter(([, value]) => typeof value !== "undefined")

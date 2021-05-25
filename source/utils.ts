@@ -6,11 +6,6 @@ import untildify from "untildify";
 
 import { Config, Engine, engines } from "./config";
 
-export function showErrorAndThrow(message: string): never {
-  window.showErrorMessage(message);
-  throw new Error(message);
-}
-
 export function showModal(message: string) {
   window.showInformationMessage(message, { modal: true });
 }
@@ -46,23 +41,21 @@ export async function getCurrentRoot(uri: Uri | undefined) {
 
   if (selectedRoot) return selectedRoot;
 
-  showErrorAndThrow(`Couldn't determine which folder to use.`);
+  throw new Error(`Couldn't determine which folder to use.`);
 }
 
 function resolveFilePath(root: WorkspaceFolder, filePath: string) {
   if (path.isAbsolute(filePath)) return filePath;
   if (filePath.startsWith("~")) return untildify(filePath);
-  return root
-    ? path.resolve(root.uri.fsPath, "./.vscode", filePath)
-    : showErrorAndThrow(`Couldn't resolve path for file '${filePath}'`);
+  if (root) return path.resolve(root.uri.fsPath, "./.vscode", filePath);
+  throw new Error(`Couldn't resolve path for file '${filePath}'`);
 }
 
 // Reads a json file from an absolute path or a path relative to the `.vscode/settings.json` file for the current workspace
 export function readJson(root: WorkspaceFolder, filePath: string) {
   const resolvedPath = resolveFilePath(root, filePath);
-  return fse.pathExistsSync(resolvedPath)
-    ? fse.readJsonSync(resolvedPath)
-    : showErrorAndThrow(`File not found: '${resolvedPath}'`);
+  if (fse.pathExistsSync(resolvedPath)) return fse.readJsonSync(resolvedPath);
+  throw new Error(`File not found: '${resolvedPath}'`);
 }
 
 export function getConfig(root: WorkspaceFolder) {
@@ -73,7 +66,7 @@ export function getEngine(root: WorkspaceFolder): Engine {
   const engine = getConfig(root).engine || "legacy";
 
   if (!engines.includes(engine)) {
-    showErrorAndThrow(`Unknown template engine '${engine}'`);
+    throw new Error(`Unknown template engine '${engine}'`);
   }
 
   return engine;
@@ -89,12 +82,12 @@ export function getHbsConfig(root: WorkspaceFolder): Record<string, any> {
   if (typeof module === "object") return module;
 
   if (typeof module !== "function")
-    showErrorAndThrow(`File ${filePath} does not export a function`);
+    throw new Error(`File ${filePath} does not export a function`);
 
   const options = module(handlebars);
   if (options === undefined) return {};
   if (typeof options !== "object")
-    showErrorAndThrow(`Function in ${filePath} does not return an object.`);
+    throw new Error(`Function in ${filePath} does not return an object.`);
 
   return options;
 }
