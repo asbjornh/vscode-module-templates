@@ -88,6 +88,11 @@
           ],
           "default": "legacy"
         },
+        "module-templates.handlebarsConfig": {
+          "scope": "resource",
+          "type": "string",
+          "description": "Path to a javascript file that exports a function or an object"
+        },
         "module-templates.templateFiles": {
           "scope": "resource",
           "type": "array",

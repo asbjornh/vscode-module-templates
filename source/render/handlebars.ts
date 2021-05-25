@@ -40,9 +40,18 @@ const helpers = {
   words: stringTransform(noCase),
 };
 
-export default function render(templateText: string, answers: Answers) {
+export default function render(
+  templateText: string,
+  answers: Answers,
+  config: Record<string, any>,
+) {
   try {
-    return compile(templateText)(answers, { helpers });
+    return compile(templateText)(
+      answers,
+      Object.assign({}, config, {
+        helpers: Object.assign({}, helpers, config.helpers),
+      }),
+    );
   } catch (error) {
     showModal(`Handlebars error:\n${error.message}`);
     throw error;

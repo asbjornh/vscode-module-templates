@@ -45,6 +45,7 @@ export type TemplatesObj = {
 
 export type Config = {
   engine?: Engine;
+  handlebarsConfig?: string;
   templates?: Template[] | TemplatesObj;
   templateFiles?: string[];
 };

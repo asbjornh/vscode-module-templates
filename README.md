@@ -62,6 +62,36 @@ Optional. `"legacy" | "handlebars"`.
 
 Use this to select what templating engine to use. For backward compatibility reasons `"legacy"` is currently the default, but the legacy engine might be deprecated and removed in the future. See below for details about the syntaxes for each engine.
 
+### module-templates.handlebarsConfig
+
+Optional. `string`
+
+Path to a javascript file that can be used to configure Handlebars. The javascript file should export a function or an object.
+
+If the file exports an object, it's passed to Handlebars as [runtime options](https://handlebarsjs.com/api-reference/runtime-options.html). This can f. ex. be used to add custom helpers and partials.
+
+```js
+module.exports = {
+  helpers: {
+    myHelper: () => "Hello!",
+  },
+};
+```
+
+If the file exports a function, that function will be called with `Handlebars`. This enables [configuration of the Handlebars runtime](https://handlebarsjs.com/api-reference/runtime.html). This can also be used to load some third party helper libraries that register themselves to the Handlebars runtime. The function can also return a [runtime options object](https://handlebarsjs.com/api-reference/runtime-options.html).
+
+```js
+module.exports = handlebars => {
+  handlebars.registerPartial("foo", () => "Hello!");
+
+  return {
+    helpers: {
+      myHelper: () => "Hello!",
+    },
+  };
+};
+```
+
 ### module-templates.templateFiles
 
 Optional. `string[]`

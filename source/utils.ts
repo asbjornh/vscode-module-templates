@@ -1,6 +1,7 @@
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import * as path from "path";
 import * as fse from "fs-extra";
+import * as handlebars from "handlebars";
 import untildify from "untildify";
 
 import { Config, Engine, engines } from "./config";
@@ -76,6 +77,26 @@ export function getEngine(root: WorkspaceFolder): Engine {
   }
 
   return engine;
+}
+
+export function getHbsConfig(root: WorkspaceFolder): Record<string, any> {
+  const filePath = getConfig(root).handlebarsConfig;
+
+  if (!filePath) return {};
+
+  const module = require(resolveFilePath(root, filePath));
+
+  if (typeof module === "object") return module;
+
+  if (typeof module !== "function")
+    showErrorAndThrow(`File ${filePath} does not export a function`);
+
+  const options = module(handlebars);
+  if (options === undefined) return {};
+  if (typeof options !== "object")
+    showErrorAndThrow(`Function in ${filePath} does not return an object.`);
+
+  return options;
 }
 
 export function getFolderPath(

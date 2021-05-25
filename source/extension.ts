@@ -3,7 +3,12 @@ import { commands, ExtensionContext, Uri, workspace, window } from "vscode";
 import * as path from "path";
 import * as fse from "fs-extra";
 
-import { getCurrentRoot, getEngine, getFolderPath } from "./utils";
+import {
+  getCurrentRoot,
+  getEngine,
+  getFolderPath,
+  getHbsConfig,
+} from "./utils";
 import { maybeRender, render } from "./render";
 import ask from "./ask-questions";
 import getTemplate from "./get-template";
@@ -19,13 +24,15 @@ async function newFromTemplate(uri: Uri | undefined) {
 
   if (!answers) return;
 
+  const hbsConfig = engine === "handlebars" ? getHbsConfig(root) : {};
+
   template.files?.forEach(async ({ name, open, content }) => {
-    const folderName = maybeRender(engine, template.folder, answers);
+    const folderName = maybeRender(engine, template.folder, answers, hbsConfig);
     const { defaultPath } = template;
     const folderPath = getFolderPath(uri, root, folderName, defaultPath);
-    const fileName = render(engine, name, answers);
+    const fileName = render(engine, name, answers, hbsConfig);
     const filePath = path.join(folderPath, fileName);
-    const fileContent = render(engine, content.join("\n"), answers);
+    const fileContent = render(engine, content.join("\n"), answers, hbsConfig);
 
     await fse.outputFile(filePath, fileContent);
 
