@@ -1,7 +1,8 @@
 export type FileTemplate = {
   name: string;
   open?: boolean;
-  content: string[];
+  content?: string[];
+  contentFile?: string;
 };
 
 type QuestionObj = {

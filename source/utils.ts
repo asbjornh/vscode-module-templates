@@ -44,7 +44,7 @@ export async function getCurrentRoot(uri: Uri | undefined) {
   throw new Error(`Couldn't determine which folder to use.`);
 }
 
-function resolveFilePath(root: WorkspaceFolder, filePath: string) {
+export function resolveFilePath(root: WorkspaceFolder, filePath: string) {
   if (path.isAbsolute(filePath)) return filePath;
   if (filePath.startsWith("~")) return untildify(filePath);
   if (root) return path.resolve(root.uri.fsPath, "./.vscode", filePath);
@@ -55,6 +55,13 @@ function resolveFilePath(root: WorkspaceFolder, filePath: string) {
 export function readJson(root: WorkspaceFolder, filePath: string) {
   const resolvedPath = resolveFilePath(root, filePath);
   if (fse.pathExistsSync(resolvedPath)) return fse.readJsonSync(resolvedPath);
+  throw new Error(`File not found: '${resolvedPath}'`);
+}
+
+export function readFile(root: WorkspaceFolder, filePath: string) {
+  const resolvedPath = resolveFilePath(root, filePath);
+  if (fse.pathExistsSync(resolvedPath))
+    return fse.readFileSync(resolvedPath, { encoding: "utf8" });
   throw new Error(`File not found: '${resolvedPath}'`);
 }
 

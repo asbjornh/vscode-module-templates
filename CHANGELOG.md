@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+
+- Adds support for reading file content templates from disk. See the `contentFile` option for files.
+
 ## 1.7.0
 
 - Adds support for configuration of Handlebars (`module-templates.handlebarsConfig`)

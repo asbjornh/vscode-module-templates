@@ -8,6 +8,7 @@ import {
   getEngine,
   getFolderPath,
   getHbsConfig,
+  readFile,
 } from "./utils";
 import { maybeRender, render } from "./render";
 import ask from "./ask-questions";
@@ -24,18 +25,32 @@ async function newFromTemplate(uri: Uri | undefined) {
 
   const hbsConfig = engine === "handlebars" ? getHbsConfig(root) : {};
 
-  template.files?.forEach(async ({ name, open, content }) => {
+  const files = template.files?.map(({ name, open, content, contentFile }) => {
     const folderName = maybeRender(engine, template.folder, answers, hbsConfig);
     const { defaultPath } = template;
     const folderPath = getFolderPath(uri, root, folderName, defaultPath);
     const fileName = render(engine, name, answers, hbsConfig);
     const filePath = path.join(folderPath, fileName);
-    const fileContent = render(engine, content.join("\n"), answers, hbsConfig);
 
+    const contentTemplate = contentFile
+      ? readFile(root, contentFile)
+      : content?.join("\n");
+
+    if (!contentTemplate)
+      throw new Error(
+        `File '${name}' has no content template. Please specify either 'content' or 'contentFile'.`,
+      );
+
+    const fileContent = render(engine, contentTemplate, answers, hbsConfig);
+
+    return { filePath, fileContent, open };
+  });
+
+  files?.forEach(async ({ filePath, fileContent, open }) => {
     await fse.outputFile(filePath, fileContent);
 
     if (open) {
-      workspace
+      await workspace
         .openTextDocument(Uri.file(filePath))
         .then(doc => window.showTextDocument(doc, { preview: false }));
     }

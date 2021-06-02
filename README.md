@@ -134,7 +134,8 @@ Required. A list of file templates. File templates are objects with the followin
 
 - `name`: Required. A name for the file to create (with file extension). Can also be a path (non-existing folders will be created). This field is a template; you can use any syntax supported by the template engine.
 - `open`: Optional. A `boolean` that indicates whether this file should be opened after creation or not.
-- `content`: Required. The template for the file to create, given as an array of strings.
+- `content`: Required unless `contentFile` is set. The template for the file to create, given as an array of strings.
+- `contentFile`: Required unless `content` is set. Path to a file to read the content template from. The file can have any extension and is read as a string. The path must be absolute, relative to home (`~`) or relative to the config file you're editing. Note that if you plan on using `contentFiles` with both user settings and workspace settings, the paths used in user settings must be absolute or relative to `~`.
 
 #### questions
 

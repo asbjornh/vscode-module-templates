@@ -1,8 +1,9 @@
+import path from "path";
 import { window, WorkspaceFolder } from "vscode";
 
 import { getConfig } from "./utils";
 import { Template, TemplatesObj } from "./config";
-import { pick, readJson } from "./utils";
+import { pick, readJson, resolveFilePath } from "./utils";
 
 function getTemplates(setting?: Template[] | TemplatesObj): Template[] {
   if (Array.isArray(setting)) {
@@ -30,6 +31,17 @@ export default async function getTemplate(root: WorkspaceFolder) {
           `Templates in '${filePath}' are empty or unable to be recognized`,
         );
       }
+
+      // NOTE: The extension resolves all file paths relative to the `.vscode` folder, but file paths are specified relative to the current templates file. This does not always work unless file paths in templates files are resolved beforehand, which is done here
+      templates.forEach(template => {
+        template.files?.forEach(file => {
+          if (!file.contentFile) return;
+          // NOTE: Absolute path to the directory where this templates file is stored
+          const dir = path.dirname(resolveFilePath(root, filePath));
+          // NOTE: Replaces the relative path with an absolute one
+          file.contentFile = path.resolve(dir, file.contentFile);
+        });
+      });
 
       return templates;
     })

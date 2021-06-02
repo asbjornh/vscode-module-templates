@@ -3,7 +3,7 @@
   "displayName": "Module Templates",
   "publisher": "asbjornh",
   "icon": "icon.png",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
     "vscode:prepublish": "webpack",
@@ -96,7 +96,7 @@
         "module-templates.templateFiles": {
           "scope": "resource",
           "type": "array",
-          "description": "A list of paths to files to load additional templates from. Paths can be absolute, relative to your home directory or relative to this file",
+          "description": "A list of paths to files to load additional templates from. Paths can be absolute, relative to your home directory ('~') or relative to this file",
           "items": {
             "type": "string"
           }
@@ -127,7 +127,7 @@
                   },
                   "defaultPath": {
                     "type": "string",
-                    "description": "Where to put module when the path is unknown, such as when running from the command palette"
+                    "description": "Where to put module when the path is unknown, such as when running from the command palette. The path should be relative to the workspace root."
                   },
                   "extends": {
                     "type": "array",
@@ -197,8 +197,11 @@
                       "type": "object",
                       "additionalProperties": false,
                       "required": [
-                        "name",
-                        "content"
+                        "name"
+                      ],
+                      "oneOf": [
+                        { "required": ["content"] },
+                        { "required": ["contentFile"] }
                       ],
                       "properties": {
                         "name": {
@@ -215,6 +218,10 @@
                           "items": {
                             "type": "string"
                           }
+                        },
+                        "contentFile": {
+                          "type": "string",
+                          "description": "Path to a file containing the content template for this file template. The path can be absolute, relative to your home directory ('~') or relative to this file"
                         }
                       }
                     }
