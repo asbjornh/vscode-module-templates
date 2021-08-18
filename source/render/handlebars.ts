@@ -11,7 +11,6 @@ import {
 import { compile } from "handlebars";
 
 import { Answers } from "../ask-questions";
-import { showModal } from "../utils";
 
 const value = (value, thisObj, options) =>
   typeof options.fn === "function"
@@ -53,7 +52,6 @@ export default function render(
       }),
     );
   } catch (error) {
-    showModal(`Handlebars error:\n${error.message}`);
-    throw error;
+    throw new Error(`Handlebars error: ${error.message}`);
   }
 }

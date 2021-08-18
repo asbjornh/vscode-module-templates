@@ -79,12 +79,22 @@ export function getEngine(root: WorkspaceFolder): Engine {
   return engine;
 }
 
+const tryRequire = (path: string) => {
+  try {
+    return require(path);
+  } catch (error) {
+    throw new Error(
+      `${error.name}: ${error.message} in ${error.stack.split("\n")[0]}`,
+    );
+  }
+};
+
 export function getHbsConfig(root: WorkspaceFolder): Record<string, any> {
   const filePath = getConfig(root).handlebarsConfig;
 
   if (!filePath) return {};
 
-  const module = require(resolveFilePath(root, filePath));
+  const module = tryRequire(resolveFilePath(root, filePath));
 
   if (typeof module === "object") return module;
 
