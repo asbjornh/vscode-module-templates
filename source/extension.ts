@@ -1,5 +1,6 @@
 "use strict";
 import { commands, ExtensionContext, Uri, workspace, window } from "vscode";
+import * as vscode from "vscode";
 import * as path from "path";
 import * as fse from "fs-extra";
 
@@ -13,6 +14,7 @@ import {
 import { maybeRender, render } from "./render";
 import ask from "./ask-questions";
 import getTemplate from "./get-template";
+import { context } from "./context";
 
 async function newFromTemplate(uri: Uri | undefined) {
   const root = await getCurrentRoot(uri);
@@ -23,13 +25,18 @@ async function newFromTemplate(uri: Uri | undefined) {
   const engine = getEngine(root);
   const answers = await ask(template.questions);
 
+  const data =
+    engine === "handlebars"
+      ? { context: await context(uri, template), ...answers }
+      : answers;
+
   const hbsConfig = engine === "handlebars" ? getHbsConfig(root) : {};
 
   const files = template.files?.map(({ name, open, content, contentFile }) => {
-    const folderName = maybeRender(engine, template.folder, answers, hbsConfig);
+    const folderName = maybeRender(engine, template.folder, data, hbsConfig);
     const { defaultPath } = template;
     const folderPath = getFolderPath(uri, root, folderName, defaultPath);
-    const fileName = render(engine, name, answers, hbsConfig);
+    const fileName = render(engine, name, data, hbsConfig);
     const filePath = path.join(folderPath, fileName);
 
     const contentTemplate = contentFile
@@ -41,7 +48,7 @@ async function newFromTemplate(uri: Uri | undefined) {
         `File '${name}' has no content template. Please specify either 'content' or 'contentFile'.`,
       );
 
-    const fileContent = render(engine, contentTemplate, answers, hbsConfig);
+    const fileContent = render(engine, contentTemplate, data, hbsConfig);
 
     return { filePath, fileContent, open };
   });

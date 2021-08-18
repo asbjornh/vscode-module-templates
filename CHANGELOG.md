@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0
+
+- Adds `context` object for Handlebars templates
+- Improves error reporting slightly
+
 ## 1.8.0
 
 - Adds support for reading file content templates from disk. See the `contentFile` option for files.

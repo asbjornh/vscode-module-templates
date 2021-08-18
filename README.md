@@ -70,6 +70,8 @@ Path to a javascript file that can be used to configure Handlebars. The javascri
 
 If the file exports an object, it's passed to Handlebars as [runtime options](https://handlebarsjs.com/api-reference/runtime-options.html). This can f. ex. be used to add custom helpers and partials.
 
+Note that when you edit this file, you might need to reload VSCode in order for the changes to take effect.
+
 ```js
 module.exports = {
   helpers: {
@@ -285,3 +287,37 @@ Casing helpers are used to transform answers into a specific casing convention. 
 | **words**    | `some_text` | `some text` |
 
 Note that handlebars helpers can be combined, which you can use to create some unsupported casing conventions. F. ex. to ouput text in `COBOL-CASE` you can use `{{upper (kebab input)}}`, or to get `UPPERCASE WORDS` use `{{upper (words input)}}`.
+
+### Context object
+
+For Handlebars templates this extension exposes a `context` object (in the global scope) that contains some metadata that might be useful. Note that if you have a question with id `"context"`, the answer to that question will replace the context object.
+
+Example:
+
+```hbs
+{{context.template.displayName}}
+```
+
+```ts
+type Context = {
+  // Contents of the clipboard:
+  clipboard: string | undefined;
+  // The data for the selected template:
+  template: Template;
+  vscode: {
+    // The item that was right-clicked in the file explorer (if any):
+    clickedItem: {
+      path: string | undefined;
+    };
+    // The currently open document (tab):
+    currentDocument: {
+      name: string | undefined;
+      path: string | undefined;
+    };
+    workspace: {
+      name: string | undefined;
+      path: string | undefined;
+    };
+  };
+};
+```
