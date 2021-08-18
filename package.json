@@ -21,7 +21,7 @@
     "@types/node": "^13.1.6",
     "@types/vscode": "^1.41.0",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.7.4",
+    "typescript": "^4.3.5",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-event-plugin": "^1.1.1"
@@ -200,8 +200,16 @@
                         "name"
                       ],
                       "oneOf": [
-                        { "required": ["content"] },
-                        { "required": ["contentFile"] }
+                        {
+                          "required": [
+                            "content"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "contentFile"
+                          ]
+                        }
                       ],
                       "properties": {
                         "name": {
