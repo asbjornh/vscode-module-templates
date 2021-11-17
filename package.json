@@ -3,7 +3,7 @@
   "displayName": "Module Templates",
   "publisher": "asbjornh",
   "icon": "icon.png",
-  "version": "1.9.0",
+  "version": "1.9.2",
   "description": "A VSCode extension for creating file/folder templates for new modules",
   "scripts": {
     "vscode:prepublish": "webpack",
@@ -81,12 +81,10 @@
         "module-templates.engine": {
           "scope": "resource",
           "type": "string",
-          "description": "What engine to use when rendering templates",
+          "description": "This option only has one valid value because the previously supported 'legacy' option is deprecated",
           "enum": [
-            "legacy",
             "handlebars"
-          ],
-          "default": "legacy"
+          ]
         },
         "module-templates.handlebarsConfig": {
           "scope": "resource",

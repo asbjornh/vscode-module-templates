@@ -58,9 +58,9 @@ Below is a config example, showing how a template for a React component can be d
 
 ### module-templates.engine
 
-Optional. `"legacy" | "handlebars"`.
+Optional. `"handlebars"`.
 
-Use this to select what templating engine to use. For backward compatibility reasons `"legacy"` is currently the default, but the legacy engine might be deprecated and removed in the future. See below for details about the syntaxes for each engine.
+This option used to support a `"legacy"` option, which is now deprecated. If you haven't set this option, or set it to `"legacy"` you'll get a warning each time you use a legacy template. Support for legacy templates will be entirely dropped in the next major version. Set this option to `"handlebars"` and see below for how to convert legacy template syntax into Handlebars syntax.
 
 ### module-templates.handlebarsConfig
 
@@ -188,14 +188,15 @@ By omitting `displayName` from templates, you can create hidden templates that a
 
 ```json
 {
+  "module-templates.engine": "handlebars",
   "module-templates.templates": {
     "jsx-file": {
       "files": [
         {
-          "name": "{name.kebab}.jsx",
+          "name": "{{kebab name}}.jsx",
           "content": [
-            "const {name.pascal} = () => null;",
-            "export default {name.pascal};"
+            "const {{pascal name}} = () => null;",
+            "export default {{pascal name}};"
           ]
         }
       ]
@@ -203,8 +204,8 @@ By omitting `displayName` from templates, you can create hidden templates that a
     "scss-file": {
       "files": [
         {
-          "name": "{name.kebab}.scss",
-          "content": [".{name.kebab} {}"]
+          "name": "{{kebab name}}.scss",
+          "content": [".{{kebab name}} {}"]
         }
       ]
     },
@@ -212,7 +213,7 @@ By omitting `displayName` from templates, you can create hidden templates that a
       "extends": ["jsx-file", "scss-file"],
       "defaultPath": "source/components",
       "displayName": "React component with SCSS",
-      "folder": "{name.kebab}",
+      "folder": "{{kebab name}}",
       "questions": { "name": "Component name" },
       "files": []
     }
@@ -222,29 +223,13 @@ By omitting `displayName` from templates, you can create hidden templates that a
 
 ## Legacy templates
 
-The legacy template engine does one thing: it replaces patterns like `{something.kebab}` with the answer to the corresponding question (`something` in this case). The patterns must also include a casing variant (`kebab` in this case), which controls the formatting of the output text. Casing alternatives:
+Legacy templates are deprecated. Please enable the `handlebars` engine and see below for how to convert legacy templates to handlebars templates.
 
-- `{<question-key>.raw}`: Unmodified text from input box
-- `{<question-key>.pascal}`: PascalCased text
-- `{<question-key>.kebab}`: kebab-cased text
-- `{<question-key>.camel}`: camelCased text
-- `{<question-key>.snake}`: snake_cased text
-
-In the following example, a folder will be created using a kebab-case version of what was typed into the input box for the `componentName` question.
-
-```json
-{
-  "module-templates.templates": {
-    "react-component": {
-      "displayName": "React component",
-      "folder": "{componentName.kebab}",
-      "questions": {
-        "componentName": "Component name"
-      }
-    }
-  }
-}
-```
+- `{<question-key>.raw}` -> `{{<question-key>}}`
+- `{<question-key>.pascal}` -> `{{pascal <question-key>}}`
+- `{<question-key>.kebab}` -> `{{kebab <question-key>}}`
+- `{<question-key>.camel}` -> `{{camel <question-key>}}`
+- `{<question-key>.snake}` -> `{{snake <question-key>}}`
 
 ## Handlebars templates
 

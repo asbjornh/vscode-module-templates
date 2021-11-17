@@ -30,6 +30,12 @@ async function newFromTemplate(uri: Uri | undefined) {
       ? { context: await context(uri, template), ...answers }
       : answers;
 
+  if (engine === "legacy") {
+    window.showWarningMessage(
+      "Legacy templates are deprecated. Please set the 'module-templates.engine' option to 'handlebars' and update your templates.",
+    );
+  }
+
   const hbsConfig = engine === "handlebars" ? getHbsConfig(root) : {};
 
   const files = template.files?.map(({ name, open, content, contentFile }) => {

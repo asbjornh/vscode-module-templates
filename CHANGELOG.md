@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.2
+
+- Fix readme and option description for `engine`
+
+## 1.9.1
+
+- Adds deprecation warning when using legacy templates
+
 ## 1.9.0
 
 - Adds `context` object for Handlebars templates
