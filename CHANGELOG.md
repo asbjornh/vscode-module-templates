@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.3
+
+- Fix `handlebarsConfig` file not found even when path is correct
+
 ## 1.9.2
 
 - Fix readme and option description for `engine`
