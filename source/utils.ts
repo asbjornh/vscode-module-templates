@@ -79,10 +79,10 @@ export function getEngine(root: WorkspaceFolder): Engine {
   return engine;
 }
 
-const tryRequire = (path: string) => {
+const tryRequire = (pathString: string) => {
   try {
     // NOTE: Webpack does some shenanigans with `require` building (this does not happen when debugging the extension in VSCode)
-    return eval(`require("${path}")`);
+    return eval(`require("${pathString}")`.replace(/\\/g, "/"));
   } catch (error) {
     throw new Error(
       `${error.name}: ${error.message} in ${error.stack.split("\n")[0]}`,

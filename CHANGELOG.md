@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.4
+
+- Fix `handlebarsConfig` file not found even when path is correct, for Windows
+
 ## 1.9.3
 
 - Fix `handlebarsConfig` file not found even when path is correct
